@@ -1,70 +1,56 @@
-import {Dimensions,  View, Text, StyleSheet, SafeAreaView }from 'react-native';
+import {Dimensions,  View, Text, StyleSheet, SafeAreaView, ActivityIndicator }from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
-import { collection, query, where, onSnapshot,doc,limit, orderBy } from "firebase/firestore";
-import {db} from "../firebase";
 import React, { useEffect, useState } from 'react';
-import { useNavigation } from "@react-navigation/native";
 import {Divider} from 'react-native-elements';
 
+const screenWidth = Dimensions.get("window").width * 0.9;
+const screenHeight = Dimensions.get("window").height * 0.5;
 
 export default function ThoracicImpedanceScreen({route}) {
-    const navigation = useNavigation();
-    const uID = route.params.userID;
-    const [datap, setDatap] = useState([]);
-    useEffect(() => onSnapshot(doc(db, "Patients", uID), (doc) => {
-      setDatap(doc.data());
-    }), []);
+    const patientInfo = route.params.patientInfo;
+    const selectedDate = route.params.selectedDate
+    const [isLoading, setIsLoading] = useState(true)
+    const [values, setValues] = useState([]);
+    const [timevalues, setTimeValues] = useState([]);
 
-    const q = query(collection(db, `Patients/${uID}/thorImp`), orderBy("Timestamp", "desc"), limit(28));
-    const [values, setValues] = useState([366.7, 371.7, 373.57, 367.88]);
-    /*
-    useEffect(() => onSnapshot(q, (querySnapshot) => {
-      const thorImp = [];
-      querySnapshot.forEach((doc) => {
-        let ti = doc.data().Z;
-        thorImp.push(ti);
-      });
-      const arrOfNum = thorImp.map(Number);
-      const reversedThorImp = arrOfNum.reverse();
-      setValues(reversedThorImp);
-    }), []);*/
+    
+    useEffect(() => {
+      setParameters()
+      setIsLoading(false)
+    }, [])
 
-    const time = query(collection(db, `Patients/${uID}/thorImp`), orderBy("Timestamp", "desc"), limit(28));
-    const [timevalues, setTimeValues] = useState(["2:39:37 PM", "2:42:14 PM", "2:44:22 PM", "2:51:32 PM"]);
 
-    /*useEffect(() => onSnapshot(time, (querySnapshot) => {
-      const timearr = [];
-      querySnapshot.forEach((doc) => {
-          let Time = doc.data().Timestamp;
-          timearr.push(Time);
-      });
-      const reversedtime = timearr.reverse();
-      setTimeValues(reversedtime);
-    }), []);*/
+    function setParameters(){
+      const data = route.params.data
+      data.map((item) => {
+        setValues((prevData) => [...prevData, item.value] )
+        setTimeValues((prevData) =>[...prevData, item.time] )
+      })
+    }
     
     return(
       <SafeAreaView style={styles.container}>
             {/* Heading Box */}
             <View style={{alignItems: 'center'}}>
-                <Text style={styles.heading}>{datap.firstName} {datap.lastName}</Text>
+                <Text style={styles.heading}>{patientInfo.firstName} {patientInfo.lastName}</Text>
             </View>
 
             <View style={{flexDirection: 'column', alignItems: 'center'}}>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Weight: </Text> 
-                    <Text style={styles.biometricValue}>{datap.weight} lbs</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.weight} lbs</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Height: </Text> 
-                    <Text style={styles.biometricValue}>{datap.height} in</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.height} in</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Gender: </Text> 
-                    <Text style={styles.biometricValue}>{datap.gender}</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.gender}</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>DOB: </Text> 
-                    <Text style={styles.biometricValue}>{datap.dob}</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.dob}</Text>
                 </View>
             </View>
 
@@ -72,10 +58,21 @@ export default function ThoracicImpedanceScreen({route}) {
                     <Divider style={styles.divider} width={1}/>
             </View>
 
+
             {/* Graph */}
+
+            
+            {isLoading == true ? <ActivityIndicator visible={true} textContent={"Loading..."} textStyle={styles.spinnerTextStyle} />
+            
+              :
+
+              values.length == 0 ? <Text style={styles.noDataText}>No data available</Text> 
+            
+              :
+
             <View style={{alignItems: 'center'}}>
                 <Text style={{textAlign: 'center'}}>Thoracic Impedance Data (|Z| ohms)</Text>
-                <Text style={{textAlign: 'center'}}>08/29/2022</Text>
+                <Text style={{textAlign: 'center'}}>{selectedDate}</Text>
 
                 <View style={styles.graph}>
                     <LineChart
@@ -87,8 +84,8 @@ export default function ThoracicImpedanceScreen({route}) {
                           }
                         ]
                       }}
-                      width={Dimensions.get("window").width * 0.95}
-                      height={Dimensions.get("window").height * 0.50}
+                      width={screenWidth}
+                      height={screenHeight}
                       withInnerLines={false}
                       xLabelsOffset={-15}
                       verticalLabelRotation={90} //Degree to rotate
@@ -103,6 +100,7 @@ export default function ThoracicImpedanceScreen({route}) {
                     />
                 </View>
             </View>
+          }
       </SafeAreaView>
     );
 }
@@ -167,5 +165,8 @@ const styles = StyleSheet.create({
     shadowOffset: {height: 4},
     shadowOpacity: 0.6,
     shadowRadius: 6,
+  },
+  noDataText: {
+    textAlign: "center"
   }
 });

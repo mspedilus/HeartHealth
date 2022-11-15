@@ -1,192 +1,178 @@
-//import * as React from 'react'
-import React, { Component, useEffect, useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, Dimensions, ScrollView, View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, SafeAreaView, Dimensions, ScrollView, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import {LineChart} from "react-native-chart-kit";
 import { useNavigation } from "@react-navigation/native";
-import { collection, query, where, onSnapshot,doc,limit, orderBy } from "firebase/firestore";
-import {db} from "../firebase";
-import {Divider} from 'react-native-elements';
+import { Divider } from 'react-native-elements';
 
-const screenWidth = Dimensions.get("window").width;
+const screenWidth = Dimensions.get("window").width * 0.9;
+const screenHeight = Dimensions.get("window").height * 0.55;
 
 export default function MovementScreen({route}) {
+
     const navigation = useNavigation();
-    const uID = route.params.userID;
+    const patientInfo = route.params.patientInfo;
+    const selectedDate = route.params.selectedDate
+    const [isLoading, setIsLoading] = useState(true)
+    const [timevalues, setTimeValues] = useState([]);
+    const [xvalues, setxValues] = React.useState([]);
+    const [yvalues, setyValues] = React.useState([]);
+    const [zvalues, setzValues] = React.useState([]);
+
+      
+    useEffect(() => {
+      setParameters()
+      setIsLoading(false)
+    }, [])
   
-    const [datap, setDatap] = useState([]);
-    useEffect(() => onSnapshot(doc(db, "Patients", uID), (doc) => {
-      setDatap(doc.data());
-    }), []);
-    const xquery = query(collection(db, `Patients/${uID}/position`), orderBy("Timestamp", "desc"), limit(28));
-    const [xvalues, setxValues] = React.useState([94, 99, 92, 92]);
+    function setParameters(){
+      const data = route.params.data
 
-    /*
-    React.useEffect(() => onSnapshot(xquery, (querySnapshot) => {
-      const xvalue = [];
-      querySnapshot.forEach((doc) => {
-        let X = doc.data().x;
-        xvalue.push(X);
-      });
-      const arrOfxvalue = xvalue.map(Number);
-      const reversedxvalue = arrOfxvalue.reverse();
-      setxValues(reversedxvalue);
-    }), []);*/
-
-    const yquery = query(collection(db, `Patients/${uID}/position`), orderBy("Timestamp", "desc"), limit(28));
-    const [yvalues, setyValues] = React.useState([-372, -361, -377, -369]);
-    /*
-    React.useEffect(() => onSnapshot(yquery, (querySnapshot) => {
-      const yvalue = [];
-      querySnapshot.forEach((doc) => {
-        let Y = doc.data().y;
-        yvalue.push(Y);
-      });
-      const arrOfyvalue = yvalue.map(Number);
-      const reversedyvalue = arrOfyvalue.reverse();
-      setyValues(reversedyvalue);
-    }), []);*/
-
-    const zquery = query(collection(db, `Patients/${uID}/position`), orderBy("Timestamp", "desc"), limit(28));
-    const [zvalues, setzValues] = React.useState([-1977, -2025, -1991, -1975]);
-    /*
-    React.useEffect(() => onSnapshot(zquery, (querySnapshot) => {
-      const zvalue = [];
-      querySnapshot.forEach((doc) => {
-        let Z = doc.data().z;
-        zvalue.push(Z);
-      });
-      const arrOfzvalue = zvalue.map(Number);
-      const reversedzvalue = arrOfzvalue.reverse();
-      setzValues(reversedzvalue);
-    }), []);*/
-
-    const time = query(collection(db, `Patients/${uID}/position`), orderBy("Timestamp", "desc"), limit(28));
-    const [timevalues, setTimeValues] = React.useState(["2:39:37 PM", "2:42:14 PM", "2:44:22 PM", "2:51:32 PM"]);
-
-    /*
-    React.useEffect(() => onSnapshot(time, (querySnapshot) => {
-      const timearr = [];
-      querySnapshot.forEach((doc) => {
-          let time = doc.data().Timestamp;
-          timearr.push(time);
-      });
-      //const arrOftime = timearr.map(Number);
-      const reversedtime = timearr.reverse();
-      setTimeValues(reversedtime);
-    }), []);*/
+      data.map((item) => {
+        //If item's x value, y value, or z value is undefined the data point wont be reflected in the graphs
+        if(item.x !== undefined && item.y !== undefined && item.z !== undefined ){
+          console.log("x " + item.x)
+          setxValues( (prevData) => [...prevData, item.x] )
+          setyValues( (prevData) => [...prevData, item.y] )
+          setzValues( (prevData) => [...prevData, item.z] )
+          setTimeValues( (prevData) =>[...prevData, item.time] )
+        }
+      })
+    }
 
     const Xdata = {
       labels: timevalues,
-      datasets: [
-        {
-          data: xvalues,
-        },
-      ],
-    };
+      datasets: [{ data: xvalues }]
+    }
     
     const Ydata = {
       labels: timevalues,
-      datasets: [
-        {
-          data: yvalues,
-        },
-      ],
-    };
+      datasets: [{ data: yvalues }]
+    }
     
     const Zdata = {
       labels: timevalues,
-      datasets: [
-        {
-          data: zvalues
-        },
-      ],
-    };
+      datasets: [{ data: zvalues }] 
+    }
+
     return(
         <SafeAreaView style={styles.container}>
 
           {/* Heading Box */}
           <View style={{alignItems: 'center'}}>
-                <Text style={styles.heading}>{datap.firstName} {datap.lastName}</Text>
+                <Text style={styles.heading}>{patientInfo.firstName} {patientInfo.lastName}</Text>
             </View>
 
             <View style={{flexDirection: 'column', alignItems: 'center'}}>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Weight: </Text> 
-                    <Text style={styles.biometricValue}>{datap.weight} lbs</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.weight} lbs</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Height: </Text> 
-                    <Text style={styles.biometricValue}>{datap.height} in</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.height} in</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Gender: </Text> 
-                    <Text style={styles.biometricValue}>{datap.gender}</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.gender}</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>DOB: </Text> 
-                    <Text style={styles.biometricValue}>{datap.dob}</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.dob}</Text>
                 </View>
             </View>
 
             <View style={{alignItems: 'center'}}>
                     <Divider style={styles.divider} width={1}/>
-                    
             </View>
 
             <View style={{alignItems: 'center'}}>
-              <TouchableOpacity onPress={() => navigation.navigate("MovementActivityScreen", {userID: uID})} style={[styles.button, {backgroundColor: '#fc3636'}]}>
+              <Text style={{textAlign: 'center'}}>{selectedDate}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("MovementActivityScreen", 
+              {"patientInfo": patientInfo, "xValues": xvalues, "yValues": yvalues, "zValues": zvalues })} style={[styles.button, {backgroundColor: '#fc3636'}]}>
                 <Text style={styles.buttonText}>Activity</Text>
               </TouchableOpacity>
               </View>
 
-        {/* Movement Graphs */}
-        <ScrollView style={styles.scroll}>
+
+         <ScrollView style={styles.scroll}>
           <View style={{alignItems: 'center'}}>
-            <Text style={styles.textStyle}>X Value Chart
-            </Text>
-            <LineChart
-              data = {Xdata}
-              width = {screenWidth-7}
-              height={380}
-              verticalLabelRotation={90} //Degree to rotate
-              chartConfig = {chartConfig}
-              withInnerLines={false}
-              bezier style = {{
-                marginVertical: 8,
-                borderRadius: 16
-              }}
-            />
-            <Text style={styles.textStyle}>Y Value Chart
-            </Text>
-            <LineChart
-              data = {Ydata}
-              width = {screenWidth-7}
-              height={380}
-              verticalLabelRotation={90} //Degree to rotate
-              chartConfig = {chartConfig}
-              withInnerLines={false}
-              bezier style = {{
-                marginVertical: 8,
-                borderRadius: 16
-              }}
-            />
-            <Text style={styles.textStyle}>Z Value Chart
-            </Text>
-            <LineChart
-              data = {Zdata}
-              width = {screenWidth-7}
-              height={380}
-              verticalLabelRotation={90} //Degree to rotate
-              chartConfig = {chartConfig}
-              withInnerLines={false}
-              bezier style = {{
-                marginVertical: 8,
-                borderRadius: 16
-              }}
-          />
+
+              {/* Movement Graphs */}
+              {isLoading == true && <ActivityIndicator visible={true} textContent={"Loading..."} textStyle={styles.spinnerTextStyle} />}
+
+              { xvalues.length == 0 ? <Text style={styles.noDataText}>No data available for x values</Text> 
+
+              :
+                
+              <View>
+                  <Text style={styles.textStyle}>X Value Chart</Text>
+                  <LineChart
+                    data = {Xdata}
+                    width = {screenWidth}
+                    height={screenHeight}
+                    verticalLabelRotation={90} //Degree to rotate
+                    chartConfig = {chartConfig}
+                    withInnerLines={false}
+                    bezier style = {{
+                      marginVertical: 8,
+                      borderRadius: 16
+                    }}
+                  />
+              </View>
+              }
+
+
+              { yvalues.length == 0 ? <Text style={styles.noDataText}>No data available for y values</Text> 
+
+              :
+              
+              <View>
+                <Text style={styles.textStyle}>Y Value Chart</Text>
+                <LineChart
+                    data = {Ydata}
+                    width = {screenWidth}
+                    height={screenHeight}
+                    verticalLabelRotation={90} //Degree to rotate
+                    chartConfig = {chartConfig}
+                    withInnerLines={false}
+                    bezier style = {{
+                          marginVertical: 8,
+                          borderRadius: 16
+                          }} 
+                />
+              </View>
+
+              }
+
+
+              { zvalues.length == 0 ? <Text style={styles.noDataText}>No data available for z values</Text> 
+
+              :
+              
+              <View>
+                  <Text style={styles.textStyle}>Z Value Chart</Text>
+                  <LineChart
+                  data = {Zdata}
+                  width = {screenWidth}
+                  height={screenHeight}
+                  verticalLabelRotation={90} //Degree to rotate
+                  chartConfig = {chartConfig}
+                  withInnerLines={false}
+                  bezier style = {{
+                          marginVertical: 8,
+                          borderRadius: 16
+                          }}
+                  />
+              </View>
+
+              }
+
         </View>
-        </ScrollView>
-        </SafeAreaView>
+        </ScrollView> 
+
+
+
+     </SafeAreaView>
     );
 }
   
@@ -254,4 +240,10 @@ export default function MovementScreen({route}) {
       paddingBottom: 2,
       fontSize: 15
     },
+    spinnerTextStyle: {
+      color: "#FFF"
+  },
+  noDataText: {
+    textAlign: "center"
+  }
   });

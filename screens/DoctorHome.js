@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { userInfo } from './LoadingScreen';
 import React from 'react'
-
+import DoctorBottomNavbar from './DoctorBottomNavbar';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -44,31 +44,8 @@ function DoctorHome() {
           </View>
       
           {/* Bottom Nav Bar */}
-
-        {/*DoctorChatSearchScreen*/} 
-
-
-          <View style={styles.bottomNavView}>
-                <View style={styles.buttonRow}>
-              <Pressable onPress={() => navigation.navigate("DoctorHome")} style={({pressed}) => pressed ? styles.mainButtonsPressed : styles.mainButtons }>
-                  <Text style={styles.buttonText}>Home</Text>
-                  <Ionicons name={'home'} size={25} color={'white'} />
-                </Pressable>
-              <Pressable onPress={() => navigation.navigate("PatientSearchScreen")} style={({pressed}) => pressed ? styles.mainButtonsPressed : styles.mainButtons }>
-                  <Text style={styles.buttonText}>Patient Search</Text>
-                  <Ionicons name={'search'} size={25} color={'white'} />
-                </Pressable>                                
-                <Pressable onPress={() => navigation.navigate("PatientResultSessions")} style={({pressed}) => pressed ? styles.mainButtonsPressed : styles.mainButtons }>
-                  <Text style={styles.buttonText}>Chat</Text>
-                  <Ionicons name={'chatbubble-ellipses'} size={25} color={'white'} />
-                </Pressable>
-              <Pressable onPress={() => navigation.navigate("DoctorSettings")} style={({pressed}) => pressed ? styles.mainButtonsPressed : styles.mainButtons }>
-                  <Text style={styles.buttonText}>Settings</Text>
-                  <Ionicons name={'settings'} size={25} color={'white'} />
-                </Pressable>
-            </View>
-          <StatusBar style="auto" />
-          </View>
+          <DoctorBottomNavbar />
+          
       </SafeAreaView>
     );
   }

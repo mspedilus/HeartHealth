@@ -55,7 +55,7 @@ function DoctorSettings() {
           </View>
   
           <View style={styles.footer}>
-            <Text>Version 1.0</Text>
+            <Text>Version 2.0</Text>
             <Text>Florida Atlantic University Research</Text>
             <Text>HeartHealth@Copyright 2022</Text>
             <Text style={{fontStyle: 'italic'}}>All rights reserved</Text>

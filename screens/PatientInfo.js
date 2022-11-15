@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View, Pressable, TouchableOpacity, ScrollView, Dimensions, Platform} from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Pressable, TouchableOpacity, ScrollView, Dimensions} from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from 'react';
 import {Divider} from 'react-native-elements';
@@ -6,15 +6,16 @@ import {Divider} from 'react-native-elements';
 import Fontisto from "react-native-vector-icons/Fontisto";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import Ionicons from 'react-native-vector-icons/Ionicons';
- 
+import DoctorBottomNavbar from './DoctorBottomNavbar'; 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 export default function PatientInfo({route}){
+
     const navigation = useNavigation();
-    const sensorData = route.params.sensorData;
-    const patientInfo = route.params.patientInfo;
+    const sensorData = route.params.sensorData
+    const patientInfo = route.params.patientInfo
+    const selectedDate = route.params.selectedDate.date
     const [ecgData, setEcgData] = useState([])
     const [heartRateData, setHeartRateData] = useState([])
     const [movementData, setMovementData] = useState([])
@@ -22,18 +23,27 @@ export default function PatientInfo({route}){
 
     function getData() {
       for(const [key, value] of Object.entries(sensorData)){
-        if(key == "ECG") setEcgData(value)
-        if(key == "heartRate") setHeartRateData(value)
-        if(key == "movement") setMovementData(value)
-        if(key == "thoracicImpedance") setThoracicImpedanceData(value)
+        for(const [key2, value2] of Object.entries(value)){
+          if(key2 == selectedDate){
+            for(const [key3, value3] of Object.entries(value2)){
+              if(key3 == "ECG") setEcgData(value3)
+              if(key3 == "heartRate") setHeartRateData(value3)
+              if(key3 == "movement") setMovementData(value3)
+              if(key3 == "thoracicImpedance") setThoracicImpedanceData(value3)
+            }
+          }
+        }
       }
     }
+
 
     useEffect(() => {
       getData()
     }, [])
   
+
     return(
+
         <SafeAreaView style={styles.container}>
                 {/* Heading Box */}
                 <View style={{alignItems: 'center'}}>
@@ -69,25 +79,25 @@ export default function PatientInfo({route}){
               <View style={styles.buttonBox}> 
                   <Text style={{textAlign: 'center', fontSize: 20}}>Wearable Sensor Data</Text>
                   <View style={styles.buttonRow}>
-                      <TouchableOpacity onPress={() => navigation.navigate("ECGScreen", {data: ecgData, "patientInfo": patientInfo})} style={[styles.button, {backgroundColor: '#f87c7c'}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate("ECGScreen", {data: ecgData, "patientInfo": patientInfo, "selectedDate": selectedDate})} style={[styles.button, {backgroundColor: '#f87c7c'}]}>
                           <Text style={styles.buttonText}>Electrocardiogram</Text>
                           <Fontisto style={styles.icon} name={'heartbeat'} size={30} color={'black'}/> 
                       </TouchableOpacity>
                   </View>
                   <View style={styles.buttonRow}>
-                      <TouchableOpacity onPress={() => navigation.navigate("ThoracicImpedanceScreen", {data: thoracicImpedance, "patientInfo": patientInfo })} style={[styles.button, {backgroundColor: '#f85353'}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate("ThoracicImpedanceScreen", {data: thoracicImpedance, "patientInfo": patientInfo, "selectedDate": selectedDate })} style={[styles.button, {backgroundColor: '#f85353'}]}>
                           <Text style={styles.buttonText}>Thoracic Impedance</Text>
                           <FontAwesome5 style={styles.icon} name={'lungs'} size={30} color={'black'}/> 
                       </TouchableOpacity>
                   </View>
                   <View style={styles.buttonRow}>
-                      <TouchableOpacity onPress={() => navigation.navigate("MovementScreen", {data: movementData, "patientInfo": patientInfo})} style={[styles.button, {backgroundColor: '#e62e2e'}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate("MovementScreen", {data: movementData, "patientInfo": patientInfo, "selectedDate": selectedDate})} style={[styles.button, {backgroundColor: '#e62e2e'}]}>
                           <Text style={styles.buttonText}>Movement</Text>
                           <FontAwesome5 style={styles.icon} name={'running'} size={35} color={'black'}/> 
                       </TouchableOpacity>
                   </View>
                   <View style={styles.buttonRow}>
-                      <TouchableOpacity onPress={() => navigation.navigate("HeartRateScreen", {data: heartRateData, "patientInfo": patientInfo})} style={[styles.button, {backgroundColor: '#971313'}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate("HeartRateScreen", {data: heartRateData, "patientInfo": patientInfo, "selectedDate": selectedDate})} style={[styles.button, {backgroundColor: '#971313'}]}>
                           <Text style={styles.buttonText}>Heart Rate</Text>
                           <FontAwesome style={styles.icon} name={'heartbeat'} size={35} color={'black'}/> 
                       </TouchableOpacity>
@@ -95,27 +105,8 @@ export default function PatientInfo({route}){
               </View>
             </ScrollView>
 
-            {/* Nav buttons */}
-            <View style={styles.bottomNavView}>
-                  <View style={styles.buttonRow}>
-                <Pressable onPress={() => navigation.navigate("DoctorHome")} style={({pressed}) => pressed ? styles.mainButtonsPressed : styles.mainButtons }>
-                    <Text style={styles.buttonText}>Home</Text>
-                    <Ionicons name={'home'} size={25} color={'white'} />
-                  </Pressable>
-                <Pressable onPress={() => navigation.navigate("PatientSearchScreen")} style={({pressed}) => pressed ? styles.mainButtonsPressed : styles.mainButtons }>
-                    <Text style={styles.buttonText}>Patient Search</Text>
-                    <Ionicons name={'search'} size={25} color={'white'} />
-                  </Pressable>
-                  <Pressable onPress={() => navigation.navigate("DoctorChatScreen")} style={({pressed}) => pressed ? styles.mainButtonsPressed : styles.mainButtons }>
-                  <Text style={styles.buttonText}>Chat</Text>
-                  <Ionicons name={'chatbubble-ellipses'} size={25} color={'white'} />
-                </Pressable>
-              <Pressable onPress={() => navigation.navigate("DoctorSettings")} style={({pressed}) => pressed ? styles.mainButtonsPressed : styles.mainButtons }>
-                  <Text style={styles.buttonText}>Settings</Text>
-                  <Ionicons name={'settings'} size={25} color={'white'} />
-                </Pressable>
-              </View>
-            </View>
+        {/*Bottom Nav buttons */}
+        <DoctorBottomNavbar />
         </SafeAreaView>
     );
   }
@@ -224,4 +215,5 @@ const styles = StyleSheet.create({
       width: screenWidth,
       bottom: 0,
     }
+    
   });

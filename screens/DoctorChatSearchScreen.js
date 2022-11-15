@@ -1,11 +1,13 @@
 import { View, Text, TextInput, Pressable, StyleSheet, Dimensions } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import React, {useState, useRef, useEffect} from 'react';
 import { userInfo } from './LoadingScreen';
 import { doc, getDoc, setDoc, collection, orderBy, query } from 'firebase/firestore';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { db } from "../firebase"; 
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import DoctorBottomNavbar from './DoctorBottomNavbar';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -94,6 +96,11 @@ export default function DoctorChatSearchScreen() {
                 })}
         </View>
        }
+
+      
+          {/* Bottom Nav Bar */}
+          <DoctorBottomNavbar />
+
     </View>
   )
 }
@@ -134,5 +141,37 @@ const styles = StyleSheet.create({
     ongoingConvoText: {
         flexDirection: "row",
         alignItems: 'center'
-    }
+    },
+    bottomNavView: {
+        position: 'absolute',
+        width: screenWidth,
+        bottom: 0,
+      },
+      buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-around', 
+        left: 10,
+        right: 5
+      },
+      mainButtonsPressed: {
+        width: screenWidth / 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        elevation: 3,
+        backgroundColor: '#fc3636',
+        position: 'relative',
+        right:    10,
+        bottom:   0,
+        paddingBottom: 20,
+        opacity: 0.7
+      },
+      buttonText: {
+        fontSize: 12,
+        lineHeight: 21,
+        fontWeight: 'bold',
+        letterSpacing: 0.25,
+        color: 'white',
+      },
 })

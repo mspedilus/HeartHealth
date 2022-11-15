@@ -135,7 +135,7 @@ export default function App() {
                 <Stack.Group screenOptions={{ headerStyle: { backgroundColor: '#fc3636' },  headerTintColor: 'black', 
                                               headerBackTitle: "", title: "" } }>
                   <Stack.Screen name="DoctorHome" component={DoctorHome} />
-                  <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "Search" : "", title: Platform.OS === 'ios' ? "" : "Search" }}
+                  <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "" : "", title: Platform.OS === 'ios' ? "" : "" }}
                                 name="PatientInfo" component={PatientInfo} />
                   <Stack.Screen options={{ title: ' ' }} name="PatientSearchScreen" component={PatientSearch} />
                 </Stack.Group>
@@ -144,17 +144,17 @@ export default function App() {
                                            
                    <Stack.Group screenOptions={{ headerStyle: { backgroundColor: '#fc3636' },  headerTintColor: 'black',
                                                 headerBackTitle: Platform.OS === 'ios' ? "Patient Info" : "", title: Platform.OS === 'ios' ? "" : "Patient Info" }}>
-                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "Back" : "", title: Platform.OS === 'ios' ? "" : "Back" }}  
+                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "" : "", title: Platform.OS === 'ios' ? "" : "" }}  
                                             name="ThoracicImpedanceScreen" component={ThoracicImpedanceScreen} />
-                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "Back" : "", title: Platform.OS === 'ios' ? "" : "Back" }}  
+                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "" : "", title: Platform.OS === 'ios' ? "" : "" }}  
                                             name="ECGScreen" component={ECGScreen} />
-                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "Back" : "", title: Platform.OS === 'ios' ? "" : "Back" }}  
+                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "" : "", title: Platform.OS === 'ios' ? "" : "" }}  
                                             name="HeartRateScreen" component={HeartRateScreen} />
-                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "Back" : "", title: Platform.OS === 'ios' ? "" : "Back" }}  
+                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "" : "", title: Platform.OS === 'ios' ? "" : "" }}  
                                             name="MovementScreen" component={MovementScreen} />
-                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "Back" : "", title: Platform.OS === 'ios' ? "" : "Back" }}  
+                    <Stack.Screen options={{headerBackTitle: Platform.OS === 'ios' ? "" : "", title: Platform.OS === 'ios' ? "" : "" }}  
                                             name="MovementActivityScreen" component={MovementActivityScreen} />
-                    <Stack.Screen options={{headerBackTitle: "", title: Platform.OS === 'ios' ? "" : "Back" }}  
+                    <Stack.Screen options={{headerBackTitle: "", title: Platform.OS === 'ios' ? "" : "" }}  
                                             name="PatientResultSessions" component={PatientResultSessions} />
                   </Stack.Group>
         

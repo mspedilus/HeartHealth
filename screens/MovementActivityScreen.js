@@ -1,64 +1,49 @@
 //import React from 'react';
 import {TextInput, Text, StyleSheet, ScrollView, SafeAreaView, View} from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from 'react';
 import {Divider} from 'react-native-elements';
-import {db} from "../firebase";
-import { collection, query, onSnapshot,doc,limit, orderBy } from "firebase/firestore";
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+
 
 export default function Activity({route}) {
-    const navigation = useNavigation();
-    const uID = route.params.userID;
-    const [datap, setDatap] = useState([]);
-    useEffect(() => onSnapshot(doc(db, "Patients", uID), (doc) => {
-    setDatap(doc.data());
-    }), []);
 
-// Retrieve last two positions
+    const patientInfo = route.params.patientInfo
+    const xVals = route.params.xValues
+    const yVals = route.params.yValues
+    const zVals = route.params.zValues
+    const [xValues, setXValues] = useState([])
+    const [yValues, setYValues] = useState([])
+    const [zValues, setZValues] = useState([])
 
-    const xquery = query(collection(db, `Patients/${uID}/position`), orderBy("Timestamp", "desc"), limit(2));
-    const [xvalues, setxValues] = React.useState([0]);
-    React.useEffect(() => onSnapshot(xquery, (querySnapshot) => {
-      const xvalue = [];
-      querySnapshot.forEach((doc) => {
-        let X = doc.data().x;
-        xvalue.push(X);
-      });
-      const arrOfxvalue = xvalue.map(Number);
-      setxValues(arrOfxvalue);
-    }), []);
-    const x0 = xvalues[0]; // latest value by time
-    const x1 = xvalues[1]; 
 
-    const yquery = query(collection(db, `Patients/${uID}/position`), orderBy("Timestamp", "desc"), limit(2));
-    const [yvalues, setyValues] = React.useState([0]);
-    React.useEffect(() => onSnapshot(yquery, (querySnapshot) => {
-      const yvalue = [];
-      querySnapshot.forEach((doc) => {
-        let Y = doc.data().y;
-        yvalue.push(Y);
-      });
-      const arrOfyvalue = yvalue.map(Number);
-      setyValues(arrOfyvalue);
-    }), []);
-    const y0 = yvalues[0]; // latest value by time
-    const y1 = yvalues[1]; 
 
-    const zquery = query(collection(db, `Patients/${uID}/position`), orderBy("Timestamp", "desc"), limit(2));
-    const [zvalues, setzValues] = React.useState([0]);
-    React.useEffect(() => onSnapshot(zquery, (querySnapshot) => {
-      const zvalue = [];
-      querySnapshot.forEach((doc) => {
-        let Z = doc.data().z;
-        zvalue.push(Z);
-      });
-      const arrOfzvalue = zvalue.map(Number);
-      setzValues(arrOfzvalue);
-    }), []);
-    const z0 = zvalues[0]; // latest value by time
-    const z1 = zvalues[1]; 
+    useEffect(() => {
+      const xLength = xVals.length
+      const yLength = yVals.length
+      const zLength = zVals.length
+
+      if(xLength >= 2){
+        setXValues(xVals.slice(xLength - 2, xLength))
+      }
+      if(yLength >= 2){
+        setYValues(yVals.slice(yLength - 2, yLength))
+
+      }      
+      if(zLength >= 2){
+        setZValues(zVals.slice(zLength - 2, zLength))
+      }
+
+    }, [])
+
+    const x0 = xValues[0]; // latest value by time
+    const x1 = xValues[1]; 
+
+    const y0 = yValues[0]; // latest value by time
+    const y1 = yValues[1]; 
+
+    const z0 = zValues[0]; // latest value by time
+    const z1 = zValues[1]; 
 
     //make copy of variables
     let zValue = z0;
@@ -74,37 +59,42 @@ export default function Activity({route}) {
 
     //compare changes in position values 
     let num;
-    if (y < 0 && z < 0){
-        num = 1;
-    }
-    else if (newX != oldX){
+
+    if (xValues.length == 0 || yValues.length  == 0 || zValues.length  == 0){
       num = 0;
     }
-    else num = 2;
+    else if (y < 0 && z < 0){
+        num = 2;
+    }
+    else if (newX != oldX){
+      num = 1;
+    }
+    else num = 3;
     
     return (
       <SafeAreaView style={styles.container}>
+
         {/* Heading Box */}
         <View style={{alignItems: 'center'}}>
-                <Text style={styles.heading}>{datap.firstName} {datap.lastName}</Text>
+                <Text style={styles.heading}>{patientInfo.firstName} {patientInfo.lastName}</Text>
             </View>
 
             <View style={{flexDirection: 'column', alignItems: 'center'}}>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Weight: </Text> 
-                    <Text style={styles.biometricValue}>{datap.weight} lbs</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.weight} lbs</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Height: </Text> 
-                    <Text style={styles.biometricValue}>{datap.height} in</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.height} in</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Gender: </Text> 
-                    <Text style={styles.biometricValue}>{datap.gender}</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.gender}</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>DOB: </Text> 
-                    <Text style={styles.biometricValue}>{datap.dob}</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.dob}</Text>
                 </View>
             </View>
 
@@ -113,33 +103,33 @@ export default function Activity({route}) {
             </View> 
 
       <ScrollView style={styles.scroll}>
-        <View style={styles.view}>
-          <TextInput
-            underlineColorAndroid="transparent"
-            label="Walking"
-            placeholderTextColor={'black'}
-            editable={false}
-            disabled={true}
-            style={num == 0 ? styles.inputValid : styles.input}
-            placeholder="Walking"
-            
-          />
-          <FontAwesome5 style={styles.icon} name={'walking'} color={'black'}/>
-        </View>
+      {num == 0 && <Text style={styles.noDataText}>Not enough data to make prediction</Text> }
+      <View>
+          <View style={styles.view}>
+            <TextInput
+              underlineColorAndroid="transparent"
+              label="Walking"
+              placeholderTextColor={'black'}
+              editable={false}
+              disabled={true}
+              style={num == 1 ? styles.inputValid : styles.input}
+              placeholder="Walking"    
+            />
+            <FontAwesome5 style={styles.icon} name={'walking'} color={'black'}/>
+          </View>
 
-        <View style={styles.view}>
-          <TextInput
-            underlineColorAndroid="transparent"
-            label="Laying"
-            editable={false}
-            disabled={true}
-            style={num == 1 ? styles.inputValid : styles.input}
-            placeholder="Laying"
-            placeholderTextColor={'black'}
-          />
-          
-          <FontAwesome style={styles.icon} name={'bed'} color={'black'}/>
-        </View>
+          <View style={styles.view}>
+            <TextInput
+              underlineColorAndroid="transparent"
+              label="Laying"
+              editable={false}
+              disabled={true}
+              style={num == 2 ? styles.inputValid : styles.input}
+              placeholder="Laying"
+              placeholderTextColor={'black'}
+            />
+            <FontAwesome style={styles.icon} name={'bed'} color={'black'}/>
+         </View>
 
         <View style={styles.view}>
           <TextInput
@@ -147,13 +137,17 @@ export default function Activity({route}) {
             label="Idle"
             editable={false}
             disabled={true}
-            style={num == 2 ? styles.inputValid : styles.input}
+            style={num == 3 ? styles.inputValid : styles.input}
             placeholder="Idle"
             placeholderTextColor={'black'}
           />
           <FontAwesome5 style={styles.icon} name={'child'} color={'black'}/>
         </View>
-        </ScrollView>
+    </View>
+
+     
+
+      </ScrollView> 
       </SafeAreaView>
     );
 }
@@ -248,4 +242,9 @@ const styles = StyleSheet.create(({
       paddingBottom: 2,
       fontSize: 15
     },
+    noDataText: {
+      textAlign: "center"
+    }
 }));
+
+

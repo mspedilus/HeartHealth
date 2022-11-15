@@ -43,7 +43,7 @@ export default function DoctorChatScreen () {
             uid: uid
         }
 
-        if (ongoingConversations.includes(uid) === false){
+        if (!ongoingConversations.some( patient => patient.uid === uid )){
             const data = {"ongoingConversations": [...ongoingConversations, patient]}
             updateDoc(docRef, data)
             .then(console.log("Success: New uid added"))

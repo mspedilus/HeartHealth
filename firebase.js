@@ -1,8 +1,5 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from 'firebase/firestore';
-import { getDatabase, ref, onValue} from 'firebase/database';
-
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyCD10KucIjlrPVxGK8hlKdv4_Hc7tHeAnE",
@@ -17,18 +14,6 @@ const firebaseConfig = {
 
  
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
-
-//Retrieves all data from real time database
-export const realTimeDatabaseData = () => {
-  const db = getDatabase(app);
-  const starCountRef = ref(db);
-  let data;
-  onValue(starCountRef, (snapshot) => {
-    data = snapshot.val()
-  });
-  return (data)
-
-}

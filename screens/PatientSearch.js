@@ -1,39 +1,38 @@
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, StyleSheet, Text, View, Dimensions, TouchableOpacity, Pressable, TextInput, Alert } from 'react-native';
-import {db} from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import React, {useState} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { userInfo } from '../App';
 
 const screenWidth = Dimensions.get("window").width;
+
 export default function PatientSearch() {
   const navigation = useNavigation();
   const [uID, setUID] = useState('');
 
+
   async function getValues() {
-  if (uID == ''){
-    Alert.alert('Field should not be empty');
-  }
-  else {
-    if (userInfo.patients.includes(Number(uID))){ //must convert uID to number to index properly
-      const docRef = doc(db, "Patients", uID);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        navigation.navigate("PatientInfo", {
-          patientUid: uID,
-        })
-      } else {
-        Alert.alert('ID does not exist', "This patient's account may have been deleted");
-      }
+    if (uID == ''){ //If field is empty
+      Alert.alert('Field should not be empty', "Enter a valid ID");
     }
-    else [
-      Alert.alert(`You do not have a patient with ID ${uID}`, 
-      'If this is incorrect, please contact us at hearthealthfau@gmail.com')
-    ]
-  }}
+    else{
+      var patientUid = await userInfo.patients.some((patient) => {
+        if(patient.uid == Number(uID)){ 
+          return patient.uid
+      }})
+
+      if(patientUid == true){
+        navigation.navigate("PatientResultSessions", { patientUid: uID })
+      }
+      else{ 
+        Alert.alert("You do not have a patient with the ID:", uID);
+      }
+
+    }
+  }
   
+
   return (
     <SafeAreaView style={styles.container}>
         {/* Header */}
@@ -84,6 +83,8 @@ export default function PatientSearch() {
     </SafeAreaView>
   );
 }
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
