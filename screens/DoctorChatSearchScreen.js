@@ -1,9 +1,7 @@
-import { View, Text, TextInput, Pressable, StyleSheet, Dimensions } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import { View, Text, TextInput, Pressable, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import React, {useState, useRef, useEffect} from 'react';
 import { userInfo } from './LoadingScreen';
 import { doc, getDoc, setDoc, collection, orderBy, query } from 'firebase/firestore';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { db } from "../firebase"; 
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -67,34 +65,36 @@ export default function DoctorChatSearchScreen() {
 
 
         {searchBarSelected ?
-        <View>
-            {patientList.length !== 0 && patientList.map((patient, index) => {
-                return (
-                <Pressable key={index} style={({pressed}) => pressed && styles.select} onPressOut={() =>{ navigation.navigate("DoctorChatScreen", {patient})}}>
-                    <Text style={styles.searchResultsText}>{patient.firstName} {patient.lastName} {patient.uid} </Text>       
-                </Pressable>)
-            })}
-        </View>
-
-        :
-       
-        <View>
-            {ongoingConversations.map((patient, index) => {
-                 return(
-
-                <Pressable key={index} style={({pressed}) => pressed && styles.select} onPressOut={() =>{ navigation.navigate("DoctorChatScreen", {patient})}}>
-                    <View style={styles.ongoingConvoText}>
-                        <FontAwesome style={styles.icon} name={"user-circle"} size={50} color={'black'}/>  
-                        <View>
-                            <Text style={{fontSize: 20}}>{patient.firstName} {patient.lastName} {patient.uid}</Text>
-                            <Text style={{color: "grey"}}>View message</Text>
-                        </View>
-                    </View>
-      
-                </Pressable>                                
-                )
+        <ScrollView>
+            <View>
+                {patientList.length !== 0 && patientList.map((patient, index) => {
+                    return (
+                    <Pressable key={index} style={({pressed}) => pressed && styles.select} onPressOut={() =>{ navigation.navigate("DoctorChatScreen", {patient})}}>
+                        <Text style={styles.searchResultsText}>{patient.firstName} {patient.lastName} {patient.uid} </Text>       
+                    </Pressable>)
                 })}
-        </View>
+            </View>
+        </ScrollView>
+        :
+        <ScrollView>
+            <View>
+                {ongoingConversations.map((patient, index) => {
+                    return(
+
+                    <Pressable key={index} style={({pressed}) => pressed && styles.select} onPressOut={() =>{ navigation.navigate("DoctorChatScreen", {patient})}}>
+                        <View style={styles.ongoingConvoText}>
+                            <FontAwesome style={styles.icon} name={"user-circle"} size={50} color={'black'}/>  
+                            <View>
+                                <Text style={{fontSize: 20}}>{patient.firstName} {patient.lastName} {patient.uid}</Text>
+                                <Text style={{color: "grey"}}>View message</Text>
+                            </View>
+                        </View>
+        
+                    </Pressable>                                
+                    )
+                    })}
+            </View>
+        </ScrollView>
        }
 
       

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, ScrollView} from 'react';
 import { useRoute } from '@react-navigation/native';
 import { View, Text, TextInput, Pressable, StyleSheet, Dimensions } from 'react-native';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -67,15 +67,17 @@ export default function DoctorChatSearchResults() {
         </View>
     {patientList.length === 0 ? <Text style={styles.noResultText}>No results found</Text> : 
     
-    <View>
-        {patientList.map((patient, index) => {
-            return (
-                <Pressable key={index} style={({pressed}) => pressed && styles.select} onPressOut={() =>{ navigation.navigate("DoctorChatScreen", {patient})}}>
-                    <Text style={styles.searchResultsText}>{patient.firstName} {patient.lastName} {patient.uid} </Text>       
-                </Pressable>
-            )
-        })}
-    </View> 
+    <ScrollView>
+        <View>
+            {patientList.map((patient, index) => {
+                return (
+                    <Pressable key={index} style={({pressed}) => pressed && styles.select} onPressOut={() =>{ navigation.navigate("DoctorChatScreen", {patient})}}>
+                        <Text style={styles.searchResultsText}>{patient.firstName} {patient.lastName} {patient.uid} </Text>       
+                    </Pressable>
+                )
+            })}
+        </View> 
+    </ScrollView>
     
     
     }
