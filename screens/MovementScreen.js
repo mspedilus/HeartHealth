@@ -5,39 +5,43 @@ import { useNavigation } from "@react-navigation/native";
 import { Divider } from 'react-native-elements';
 
 const screenWidth = Dimensions.get("window").width * 0.9;
-const screenHeight = Dimensions.get("window").height * 0.55;
+const screenHeight = Dimensions.get("window").height * 0.50;
 
 export default function MovementScreen({route}) {
 
     const navigation = useNavigation();
     const patientInfo = route.params.patientInfo;
     const selectedDate = route.params.selectedDate
+    const movementXData = route.params.movementXData
+    const movementYData = route.params.movementYData
+    const movementZData = route.params.movementZData
+
     const [isLoading, setIsLoading] = useState(true)
     const [timevalues, setTimeValues] = useState([]);
-    const [xvalues, setxValues] = React.useState([]);
-    const [yvalues, setyValues] = React.useState([]);
-    const [zvalues, setzValues] = React.useState([]);
+    const [xvalues, setxValues] = React.useState(movementXData);
+    const [yvalues, setyValues] = React.useState(movementYData);
+    const [zvalues, setzValues] = React.useState(movementZData);
 
       
     useEffect(() => {
-      setParameters()
+      //setParameters()
       setIsLoading(false)
     }, [])
   
-    function setParameters(){
-      const data = route.params.data
+    // function setParameters(){
+    //   const data = route.params.data
 
-      data.map((item) => {
-        //If item's x value, y value, or z value is undefined the data point wont be reflected in the graphs
-        if(item.x !== undefined && item.y !== undefined && item.z !== undefined ){
-          console.log("x " + item.x)
-          setxValues( (prevData) => [...prevData, item.x] )
-          setyValues( (prevData) => [...prevData, item.y] )
-          setzValues( (prevData) => [...prevData, item.z] )
-          setTimeValues( (prevData) =>[...prevData, item.time] )
-        }
-      })
-    }
+    //   data.map((item) => {
+    //     //If item's x value, y value, or z value is undefined the data point wont be reflected in the graphs
+    //     if(item !== undefined && item !== undefined && item !== undefined ){
+    //       console.log("x " + item.x)
+    //       setxValues( (prevData) => [...prevData, item.x] )
+    //       setyValues( (prevData) => [...prevData, item.y] )
+    //       setzValues( (prevData) => [...prevData, item.z] )
+    //       setTimeValues( (prevData) =>[...prevData, item.time] )
+    //     }
+    //   })
+    // }
 
     const Xdata = {
       labels: timevalues,
@@ -113,11 +117,12 @@ export default function MovementScreen({route}) {
                     verticalLabelRotation={90} //Degree to rotate
                     chartConfig = {chartConfig}
                     withInnerLines={false}
-                    bezier style = {{
+                    style = {{
                       marginVertical: 8,
                       borderRadius: 16
                     }}
                   />
+              <Text style={{textAlign: "center", bottom: 70, fontSize: 13}}>{selectedDate}</Text>
               </View>
               }
 
@@ -140,6 +145,7 @@ export default function MovementScreen({route}) {
                           borderRadius: 16
                           }} 
                 />
+              <Text style={{textAlign: "center", bottom: 70, fontSize: 13}}>{selectedDate}</Text>
               </View>
 
               }
@@ -166,6 +172,7 @@ export default function MovementScreen({route}) {
               </View>
 
               }
+              <Text style={{textAlign: "center", bottom: 70, fontSize: 13}}>{selectedDate}</Text>
 
         </View>
         </ScrollView> 

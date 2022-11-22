@@ -10,23 +10,13 @@ export default function ThoracicImpedanceScreen({route}) {
     const patientInfo = route.params.patientInfo;
     const selectedDate = route.params.selectedDate
     const [isLoading, setIsLoading] = useState(true)
-    const [values, setValues] = useState([]);
-    const [timevalues, setTimeValues] = useState([]);
+    const [values, setValues] = useState(route.params.data);
 
     
     useEffect(() => {
-      setParameters()
       setIsLoading(false)
     }, [])
 
-
-    function setParameters(){
-      const data = route.params.data
-      data.map((item) => {
-        setValues((prevData) => [...prevData, item.value] )
-        setTimeValues((prevData) =>[...prevData, item.time] )
-      })
-    }
     
     return(
       <SafeAreaView style={styles.container}>
@@ -77,7 +67,6 @@ export default function ThoracicImpedanceScreen({route}) {
                 <View style={styles.graph}>
                     <LineChart
                       data={{
-                        labels: timevalues, //x-axis labels
                         datasets: [
                           {
                             data: values
@@ -91,7 +80,6 @@ export default function ThoracicImpedanceScreen({route}) {
                       verticalLabelRotation={90} //Degree to rotate
                       yAxisInterval={1}
                       chartConfig={chartConfig}
-                      bezier 
                       style={{
                         marginVertical: 8,
                         borderRadius: 16,
@@ -99,6 +87,7 @@ export default function ThoracicImpedanceScreen({route}) {
                       }}
                     />
                 </View>
+                <Text style={{textAlign: "center", bottom: 70, fontSize: 13}}>{selectedDate}</Text>
             </View>
           }
       </SafeAreaView>

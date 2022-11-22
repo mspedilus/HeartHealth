@@ -1,6 +1,6 @@
 import { initializeApp,  } from "firebase/app";
 import { getFirestore } from 'firebase/firestore';
-import { realTimeDatabaseData } from "./firebase"
+import { getDatabase, ref} from 'firebase/database';
 
 
 const firebaseConfig = {
@@ -14,6 +14,6 @@ const firebaseConfig = {
   measurementId: "G-237KSFEBFT"
 };
 
- 
+
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);

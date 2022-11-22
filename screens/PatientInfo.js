@@ -11,25 +11,31 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 
 export default function PatientInfo({route}){
-
+  
     const navigation = useNavigation();
     const sensorData = route.params.sensorData
     const patientInfo = route.params.patientInfo
     const selectedDate = route.params.selectedDate.date
     const [ecgData, setEcgData] = useState([])
     const [heartRateData, setHeartRateData] = useState([])
-    const [movementData, setMovementData] = useState([])
+    const [movementXData, setMovementXData] = useState([])
+    const [movementYData, setMovementYData] = useState([])
+    const [movementZData, setMovementZData] = useState([])
     const [thoracicImpedance, setThoracicImpedanceData] = useState([])
+    const [activityStatus, setActivityStatus] = useState([])
 
     function getData() {
       for(const [key, value] of Object.entries(sensorData)){
         for(const [key2, value2] of Object.entries(value)){
           if(key2 == selectedDate){
             for(const [key3, value3] of Object.entries(value2)){
-              if(key3 == "ECG") setEcgData(value3)
-              if(key3 == "heartRate") setHeartRateData(value3)
-              if(key3 == "movement") setMovementData(value3)
-              if(key3 == "thoracicImpedance") setThoracicImpedanceData(value3)
+              if(key3.includes("ECG")) setEcgData((prevData) => [...prevData, value3])
+              if(key3.includes("HR")) setHeartRateData((prevData) => [...prevData, value3])
+              if(key3.includes("MOX")) setMovementXData((prevData) => [...prevData, value3])
+              if(key3.includes("MOY")) setMovementYData((prevData) => [...prevData, value3])
+              if(key3.includes("MOZ")) setMovementZData((prevData) => [...prevData, value3])
+              if(key3.includes("TI")) setThoracicImpedanceData((prevData) => [...prevData, value3])
+              if(key3.toLowerCase().includes("status")) setActivityStatus(value3)
             }
           }
         }
@@ -40,7 +46,6 @@ export default function PatientInfo({route}){
     useEffect(() => {
       getData()
     }, [])
-  
 
     return(
 
@@ -79,25 +84,25 @@ export default function PatientInfo({route}){
               <View style={styles.buttonBox}> 
                   <Text style={{textAlign: 'center', fontSize: 20}}>Wearable Sensor Data</Text>
                   <View style={styles.buttonRow}>
-                      <TouchableOpacity onPress={() => navigation.navigate("ECGScreen", {data: ecgData, "patientInfo": patientInfo, "selectedDate": selectedDate})} style={[styles.button, {backgroundColor: '#f87c7c'}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate("ECGScreen", {data: ecgData, "patientInfo": patientInfo, "selectedDate": selectedDate, "activityStatus": activityStatus})} style={[styles.button, {backgroundColor: '#f87c7c'}]}>
                           <Text style={styles.buttonText}>Electrocardiogram</Text>
                           <Fontisto style={styles.icon} name={'heartbeat'} size={30} color={'black'}/> 
                       </TouchableOpacity>
                   </View>
                   <View style={styles.buttonRow}>
-                      <TouchableOpacity onPress={() => navigation.navigate("ThoracicImpedanceScreen", {data: thoracicImpedance, "patientInfo": patientInfo, "selectedDate": selectedDate })} style={[styles.button, {backgroundColor: '#f85353'}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate("ThoracicImpedanceScreen", {data: thoracicImpedance, "patientInfo": patientInfo, "selectedDate": selectedDate, "activityStatus": activityStatus})} style={[styles.button, {backgroundColor: '#f85353'}]}>
                           <Text style={styles.buttonText}>Thoracic Impedance</Text>
                           <FontAwesome5 style={styles.icon} name={'lungs'} size={30} color={'black'}/> 
                       </TouchableOpacity>
                   </View>
                   <View style={styles.buttonRow}>
-                      <TouchableOpacity onPress={() => navigation.navigate("MovementScreen", {data: movementData, "patientInfo": patientInfo, "selectedDate": selectedDate})} style={[styles.button, {backgroundColor: '#e62e2e'}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate("MovementScreen", {"movementXData": movementXData, "movementYData": movementYData, "movementZData": movementZData, "patientInfo": patientInfo, "selectedDate": selectedDate, "activityStatus": activityStatus})} style={[styles.button, {backgroundColor: '#e62e2e'}]}>
                           <Text style={styles.buttonText}>Movement</Text>
                           <FontAwesome5 style={styles.icon} name={'running'} size={35} color={'black'}/> 
                       </TouchableOpacity>
                   </View>
                   <View style={styles.buttonRow}>
-                      <TouchableOpacity onPress={() => navigation.navigate("HeartRateScreen", {data: heartRateData, "patientInfo": patientInfo, "selectedDate": selectedDate})} style={[styles.button, {backgroundColor: '#971313'}]}>
+                      <TouchableOpacity onPress={() => navigation.navigate("HeartRateScreen", {data: heartRateData, "patientInfo": patientInfo, "selectedDate": selectedDate, "activityStatus": activityStatus})} style={[styles.button, {backgroundColor: '#971313'}]}>
                           <Text style={styles.buttonText}>Heart Rate</Text>
                           <FontAwesome style={styles.icon} name={'heartbeat'} size={35} color={'black'}/> 
                       </TouchableOpacity>

@@ -1,41 +1,70 @@
 import {Dimensions, View, Text, StyleSheet, SafeAreaView, ActivityIndicator}from 'react-native'
 import {LineChart} from 'react-native-chart-kit'
 import React, { useEffect, useState } from 'react';
-import {Divider} from 'react-native-elements';
+import { Divider } from 'react-native-elements';
+import { app } from "../firebase"
+import { getDatabase, ref, onValue} from 'firebase/database';
+
 
 const screenWidth = Dimensions.get("window").width * 0.9;
 const screenHeight = Dimensions.get("window").height * 0.5;
 
 export default function ECGScreen({route}) {
+
+    const [data, setData] = useState({})
     const patientInfo = route.params.patientInfo;
     const selectedDate = route.params.selectedDate
     const [isLoading, setIsLoading] = useState(true)
     const [values, setValues] = useState([]);
-    const [timevalues, setTimeValues] = useState([]);
-
+    const realtimeDB = getDatabase(app);
+    const starCountRef = ref(realtimeDB);
+    const [test, setTest] = useState("")
+    const [ecgData, setEcgData] = useState([])
 
     useEffect(() => {
-      setParameters()
-      setIsLoading(false)
+        onValue(starCountRef,  (snapshot) => {
+          setData(snapshot.val())
+        });
+        setIsLoading(false)
     }, [])
 
+    useEffect(() => {
+      getData()
+    }, [data])
 
-    function setParameters(){
-      const data = route.params.data
-      data.map((item) => {
-        setValues((prevData) => [...prevData, item.value] )
-        setTimeValues((prevData) =>[...prevData, item.time] )
-      })
-    }
+    // useEffect(() => {
+    //   onValue(starCountRef,  (snapshot) => {
+    //     setData(snapshot.val())
+    //    });
+    // }, [data])
   
+    console.log(ecgData)
+
+    function getData() {
+      for(const [key, value] of Object.entries(data)){
+        for(const [key2, value2] of Object.entries(value)){
+          if(key2 == selectedDate){
+            for(const [key3, value3] of Object.entries(value2)){
+                if(key3.includes("ECG")) setEcgData((prevData) => [...prevData, value3])
+
+
+
+              // if(key3.includes("HR")) setHeartRateData((prevData) => [...prevData, value3])
+              // if(key3.includes("MOX")) setMovementXData((prevData) => [...prevData, value3])
+              // if(key3.includes("MOY")) setMovementYData((prevData) => [...prevData, value3])
+              // if(key3.includes("MOZ")) setMovementZData((prevData) => [...prevData, value3])
+              // if(key3.includes("TI")) setThoracicImpedanceData((prevData) => [...prevData, value3])
+              // if(key3.toLowerCase().includes("status")) setActivityStatus(value3)
+            }
+          }
+        }
+      }
+    }
+
+
     const graphECG = {
-      labels: timevalues,
-      datasets: [
-        {
-          data: values,
-        },
-      ],
-    };
+      datasets: [ { data: ecgData } ]
+     };
 
     
     return(
@@ -73,13 +102,13 @@ export default function ECGScreen({route}) {
             
               :
 
-              values.length == 0 ? <Text style={styles.noDataText}>No data available</Text> 
+              values.length !== 0 ? <Text style={styles.noDataText}>No data available</Text> 
               
               : 
 
               <View style={{alignItems: 'center'}}>
                 <Text style={{textAlign: 'center'}}>ECG Data (mV)</Text>
-                <Text style={{textAlign: 'center'}}>{selectedDate}</Text>
+                <Text style={{textAlign: 'center'}}>Timestamp: {selectedDate}</Text>
                 <View style={styles.graph}>
                     <LineChart
                       data={graphECG}
@@ -89,14 +118,14 @@ export default function ECGScreen({route}) {
                       xLabelsOffset={-15}
                       verticalLabelRotation={90} //Degree to rotate
                       yAxisInterval={0.005}
-                      chartConfig={chartConfig}
-                      bezier 
+                      chartConfig={chartConfig} 
                       style={{
                         marginVertical: 8,
                         borderRadius: 16,
                         padding: 10,
                       }}
                     />
+                    <Text style={{textAlign: "center", bottom: 70, fontSize: 13}}>{selectedDate}</Text>
                 </View>
              </View>  
           }
