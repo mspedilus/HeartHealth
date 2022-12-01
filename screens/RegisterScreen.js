@@ -59,12 +59,11 @@ function RegisterScreen() {
 
 
   async function SignUp() { 
-    const { firstName, lastName, role, email, phoneNum, dob, gender, height, weight, 
+    const { firstName, lastName, role, email, phoneNum, dob, gender, height, weight, uid,
       affiliation, designation, workPhone, workFax,workAddress, doctorId, patients, pwd, pwd2, ongoingConversations } = values
 
       const lastId = await getLastId(role);
       const newId =  new Date().getTime(); //Creates unique property id 
-      //const newId = Number(lastId) + 1;
      
   
       //checks password  
@@ -103,8 +102,8 @@ function RegisterScreen() {
           else {
             createUserWithEmailAndPassword(auth, email, pwd)
                 .then(() => {
-                  setDoc(doc(collection(db, role + "s"), String(newId)), {
-                    uid: newId,
+                  setDoc(doc(collection(db, role + "s"), String(uid)), {
+                    uid: uid,
                     firstName,
                     lastName,
                     role,
@@ -120,7 +119,7 @@ function RegisterScreen() {
                 .catch((error) => {
                     alert(error.message)
                 });
-            updateDoc(docRef, {patients: arrayUnion({uid: newId, firstName: firstName, lastName: lastName})});
+            updateDoc(docRef, {patients: arrayUnion({uid: uid, firstName: firstName, lastName: lastName})});
           }
         }
         else {
@@ -198,49 +197,86 @@ function RegisterScreen() {
         />
 
         {/* Patient Questions */}
-          {
-            show?<TextInput style={styles.input} keyboardType="numeric" placeholder="Date of Birth (MM/DD/YYYY)" onChangeText={text => handleChange(text, "dob")} />:null
+        
+          { show ?
+            <View>
+              <Text style={styles.titleText}>Date of Birth (MM/DD/YYYY) </Text>
+              <TextInput style={styles.input} keyboardType="numeric" onChangeText={text => handleChange(text, "dob")} />
+            </View>
+            : null
           }
+
+
+
           {
-            show?
-            <SelectDropdown
-            data={gender}
-            onSelect={(selectedItem, index) => {
-              handleChange(selectedItem, "gender");
-            }}
-            defaultButtonText={"Select gender..."}
-            buttonTextAfterSelection={(selectedItem, index) => {
-              return selectedItem;
-            }}
-            rowTextForSelection={(item, index) => {
-              return item;
-            }}
-            buttonStyle={styles.dropdown4BtnStyle}
-            buttonTextStyle={styles.dropdown4BtnTxtStyle}
-            renderDropdownIcon={(isOpened) => {
-              return (
-                <FontAwesome
-                  name={isOpened ? "chevron-up" : "chevron-down"}
-                  color={"#444"}
-                  size={13}
-                />
-              );
-            }}
-            dropdownIconPosition={"right"}
-            dropdownStyle={styles.dropdown4DropdownStyle}
-            rowStyle={styles.dropdown4RowStyle}
-            rowTextStyle={styles.dropdown4RowTxtStyle}
-          />:null
+            show ?
+            <View>
+              <Text style={styles.titleText}>Gender</Text>
+              <SelectDropdown
+              data={gender}
+              onSelect={(selectedItem, index) => {
+                handleChange(selectedItem, "gender");
+              }}
+              defaultButtonText={"Select gender..."}
+              buttonTextAfterSelection={(selectedItem, index) => {
+                return selectedItem;
+              }}
+              rowTextForSelection={(item, index) => {
+                return item;
+              }}
+              buttonStyle={styles.dropdown4BtnStyle}
+              buttonTextStyle={styles.dropdown4BtnTxtStyle}
+              renderDropdownIcon={(isOpened) => {
+                return (
+                  <FontAwesome
+                    name={isOpened ? "chevron-up" : "chevron-down"}
+                    color={"#444"}
+                    size={13}
+                  />
+                );
+              }}
+              dropdownIconPosition={"right"}
+              dropdownStyle={styles.dropdown4DropdownStyle}
+              rowStyle={styles.dropdown4RowStyle}
+              rowTextStyle={styles.dropdown4RowTxtStyle}
+            />
+          </View>
+          : null
           }
-          {
-            show?<TextInput style={styles.input} placeholder="Height (in)" keyboardType="numeric" onChangeText={text => handleChange(text, "height")} />:null
+
+          { show ?
+            <View>
+              <Text style={styles.titleText}>Height (in)</Text>
+              <TextInput style={styles.input} keyboardType="numeric" onChangeText={text => handleChange(text, "height")} />
+            </View>
+          : null
           }
-          {
-            show?<TextInput style={styles.input} placeholder="Weight (lb)" keyboardType="numeric" onChangeText={text => handleChange(text, "weight")} />:null
+
+
+          { show ?
+            <View>
+              <Text style={styles.titleText}>Weight (lb)</Text>
+              <TextInput style={styles.input} keyboardType="numeric" onChangeText={text => handleChange(text, "weight")} />
+            </View>
+            : null
           }
-          {
-            show?<TextInput style={styles.input} placeholder="Doctor ID" keyboardType="numeric" onChangeText={text => handleChange(text, "doctorId")} />:null
+
+
+          { show ?          
+            <View>
+              <Text style={styles.titleText}>Doctor ID</Text>
+              <TextInput style={styles.input} keyboardType="numeric" onChangeText={text => handleChange(text, "doctorId")} />
+            </View>
+            : null
           }
+
+           { show  ?
+            <View>
+              <Text style={styles.titleText}>Patient ID</Text> 
+              <TextInput style={styles.input} onChangeText={text => handleChange(text, "uid")} />
+            </View>
+           : null
+        }
 
         {/* Doctor Questions */}
           {/* Affiliation */}

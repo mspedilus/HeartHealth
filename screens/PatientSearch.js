@@ -18,7 +18,7 @@ export default function PatientSearch() {
     }
     else{
       var patientUid = await userInfo.patients.some((patient) => {
-        if(patient.uid == Number(uID)){ 
+        if(patient.uid == uID){ 
           return patient.uid
       }})
 

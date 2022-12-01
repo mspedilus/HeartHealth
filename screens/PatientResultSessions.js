@@ -3,8 +3,8 @@ import {Divider} from 'react-native-elements';
 import {useState} from 'react';
 import { useEffect } from 'react';
 import {db, app} from "../firebase"
-import { doc, getDoc} from 'firebase/firestore';
-import { getDatabase, ref, onValue} from 'firebase/database';
+import { doc, getDoc } from 'firebase/firestore';
+import { getDatabase, ref, onValue, limitToLast, query} from 'firebase/database';
 import {LineChart} from 'react-native-chart-kit'
 import SelectDropdown from 'react-native-select-dropdown'
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -14,13 +14,18 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height * 0.5;
 
 export default function PatientResultSessions({route}) {
-
     const patientUid = route.params.patientUid;
     const realtimeDB = getDatabase(app);
-    const starCountRef = ref(realtimeDB);
-    
+    const starCountRef = query(ref(realtimeDB, patientUid), limitToLast(1))
+
+
+
     const [patientInfo, setPatientInfo] = useState({})
-    const [data, setData] = useState({})
+    const [data, setData] = useState([])
+    const [graphData, setGraphData] = useState( {ECG_Timestamps: [], ECG_Data: [], 
+                                                 HR_Timestamps: [], HR_Data: [], 
+                                                 TI_Timestamps: [], TI_Data: [], 
+                                                 AS_Timestamps: [], AS_Data: []} )
     const [ECG, setECG] = useState([])
     const [ECG_Graph, setECG_Graph] = useState([])
     const [gotValue, setGotValue] = useState(false)
@@ -29,23 +34,22 @@ export default function PatientResultSessions({route}) {
     const [thoracicImpedance, setThoracicImpedance] = useState({timestamps: [], data: []})
     const [status, setStatus] = useState({timestamps: [], data: []})
     const [loading, setLoading] = useState(true)
-    const [done, setDone] = useState(false)
+    let done = false
 
     useEffect(() => {
       if(Object.keys(patientInfo).length === 0) getPatientInfo() //Gets patient info for top header
       
       onValue(starCountRef,  (snapshot) => { //Gets data from real time database
         setData(snapshot.val())
+        console.log(snapshot.val())
        });
-
     }, [])
 
     useEffect(() => {
-      getData() //Filters and adds sensor data into designated state
-      setDone(true) //For loading icon
+      if(data.length != 0) getData() //Filters and adds sensor data into designated state
+      done = true //For loading icon
       if(done) setLoading(false) //For loading icon
     }, [data])
-
     
     //Returns patient info
     async function getPatientInfo () {
@@ -55,11 +59,11 @@ export default function PatientResultSessions({route}) {
            setPatientInfo(docSnap.data())
         }
     }
+    console.log(data)
 
 
     //Filters and adds sensor data into designated state
     function getData() {
-      
       //Reset values 
       setHeartRate({timestamps: [], data: []})
       setThoracicImpedance({timestamps: [], data: []})
@@ -79,62 +83,82 @@ export default function PatientResultSessions({route}) {
       let TI_Exist = false
       let AS_Exist = false
       let ECG_Timestamps_Exist = false
+      let start;
+      let end;
+      let slicedData = []
 
+      //Gets Last 40 timestamps
       for (const [key, value] of Object.entries(data)){ // ID, timestamp
         if(key == patientUid){
-          for(const [key2, value2] of Object.entries(value)){ //timestamp, data
-
-            let ECG_Exist = false
-            let ECG_data = []
-
-            for(const [key3, value3] of Object.entries(value2)){ //data, specific data type
-              if(key3.includes("ECG") && typeof value3 != 'string'){  //Filters to only include ECG data
-                ECG_Exist = true
-                ECG_Timestamps_Exist = true
-                if(!ECG_Timestamps.includes(key2)) ECG_Timestamps.push(key2)
-                ECG_data.push(value3)
-              }
-               else if(key3.includes("HR") && typeof value3 != 'string'){  //Filters to only include HR data
-                HR_Exist = true
-                if(!HR_Timestamps.includes(key2)) HR_Timestamps.push(key2)
-                HR_values.push(value3)
-              }
-              else if(key3.includes("TI") && typeof value3 != 'string'){  //Filters to only include TI data
-                TI_Exist = true
-                if(!TI_Timestamps.includes(key2)) TI_Timestamps.push(key2)
-                TI_values.push(value3)
-              }
-              else if(key3.toLowerCase().includes("status")){  //Filters to only include AS data
-                AS_Exist = true
-                let bit = value3.toLowerCase() == "not active" ? 0 : 1
-                if(!AS_Timestamps.includes(key2)) AS_Timestamps.push(key2)
-                AS_values.push(bit)
-              }
-            }
-
-            //Adds data for ECG
-            if(ECG_Exist == true) {
-              if(ECG_Graph.length == 0 && gotValue == false){
-                setGotValue(true)
-                setECG_Graph(ECG_data)
-              }
-              setECG((prevData) => [...prevData, {[key2]: ECG_data}])
-            }
-    
-          }
+          end = Object.keys(value).length
+          start = end - 40
+          slicedData = Object.fromEntries( Object.entries(value).slice(start, end) )
+          break
         }
       }
 
+     if (slicedData.length != 0) {
+      for(const [key2, value2] of Object.entries(slicedData)){ //timestamp, data
+       
+        let ECG_Exist = false
+        let ECG_data = []
+
+        for(const [key3, value3] of Object.entries(value2)){ //data, specific data type
+          if(key3.includes("ECG") && typeof value3 != 'string'){  //Filters to only include ECG data
+            ECG_Exist = true
+            ECG_Timestamps_Exist = true
+            if(!ECG_Timestamps.includes(key2)) ECG_Timestamps.push(key2)
+            ECG_data.push(value3)
+          }
+           else if(key3.includes("HR") && typeof value3 != 'string'){  //Filters to only include HR data
+            HR_Exist = true
+            if(!HR_Timestamps.includes(key2)) HR_Timestamps.push(key2)
+            HR_values.push(value3)
+          }
+          else if(key3.includes("TI") && typeof value3 != 'string'){  //Filters to only include TI data
+            TI_Exist = true
+            if(!TI_Timestamps.includes(key2)) TI_Timestamps.push(key2)
+            TI_values.push(value3)
+          }
+          else if(key3.toLowerCase().includes("status")){  //Filters to only include AS data
+            AS_Exist = true
+            let bit = value3.toLowerCase() == "not active" ? 0 : 1
+            if(!AS_Timestamps.includes(key2)) AS_Timestamps.push(key2)
+            AS_values.push(bit)
+          }
+        }
+                //Adds data for ECG
+                if(ECG_Exist == true) {
+                  if(ECG_Graph.length == 0 && gotValue == false){
+                    setGotValue(true)
+                    setECG_Graph(ECG_data)
+                  }
+                  setECG((prevData) => [...prevData, {[key2]: ECG_data}])
+                }
+       }
+
+
+
+      }
       //Adds data for HR, TI, & AC
-      if(HR_Exist == true) setHeartRate({timestamps: HR_Timestamps, data: HR_values})
-      if(TI_Exist == true) setThoracicImpedance({timestamps: TI_Timestamps, data: TI_values})
-      if(AS_Exist == true) setStatus({timestamps: AS_Timestamps, data: AS_values})
-      if(ECG_Timestamps_Exist == true) setECG_Timestamps(ECG_Timestamps)
+      // if(HR_Exist == true) setHeartRate({timestamps: HR_Timestamps, data: HR_values})
+      // if(TI_Exist == true) setThoracicImpedance({timestamps: TI_Timestamps, data: TI_values})
+      // if(AS_Exist == true) setStatus({timestamps: AS_Timestamps, data: AS_values})
+      // if(ECG_Timestamps_Exist == true) setECG_Timestamps(ECG_Timestamps)
+
+      setGraphData({ HR_Timestamps: HR_Timestamps, HR_Data: HR_values, 
+                     TI_Timestamps: TI_Timestamps, TI_Data: TI_values,
+                     AS_timestamps: AS_Timestamps, AS_Data: AS_values})
+
+
 
     }
 
+
+    //console.log("data", data)
+   // console.log("Graph", graphData)
     // console.log("timestamp", timestamps)
-    // console.log("heart rate", heartRate)
+   // console.log("heart rate", heartRate)
     // console.log("TI", thoracicImpedance)
     // console.log("status", status)
     // console.log("ECG", ECG)
@@ -183,22 +207,23 @@ export default function PatientResultSessions({route}) {
 
         
           {/* Heart Rate Graph */}
-          {heartRate.data.length == 0 && loading == false ? <Text style={styles.noDataText}>No data available for heart rate</Text> 
+          {graphData.HR_Data.length == 0 && loading == false ? <Text style={styles.noDataText}>No data available for heart rate</Text> 
 
           :
 
-          (heartRate.data.length > 0 && loading == false) &&
+          (graphData.HR_Data.length > 0 && loading == false) &&
 
           <View style={styles.graphContainer}>
             <Text style={{textAlign: 'center'}}>Heart Rate Data (bpm)</Text>
             <LineChart
                   data={{
-                    labels: heartRate.timestamps,
-                    datasets: [ { data: heartRate.data,
+                    labels: graphData.HR_Timestamps,
+                    datasets: [ { data: graphData.HR_Data,
                                   strokeWidth: 2 }] 
                   }}
                   width={screenWidth - 20}
                   height={screenHeight * 0.85}
+                  verticalLabelRotation={90} //Degree to rotate
                   chartConfig={chartConfig}
                   withInnerLines={false}
                   style={styles.graph}
@@ -207,22 +232,23 @@ export default function PatientResultSessions({route}) {
           }
 
           {/* Thoracic Impedance Graph */}
-          {thoracicImpedance.data.length == 0 && loading == false ? <Text style={styles.noDataText}>No data available for thoracic Impedance</Text> 
+          {graphData.TI_Data.length == 0 && loading == false ? <Text style={styles.noDataText}>No data available for thoracic Impedance</Text> 
 
           :
 
-          (thoracicImpedance.data.length > 0 && loading == false) &&
+          (graphData.TI_Data.length > 0 && loading == false) &&
             
           <View style={styles.graphContainer}>
             <Text style={{textAlign: 'center'}}>Thoracic Impedance Data (|Z| ohms)</Text>
             <LineChart
                   data={{
-                    labels: thoracicImpedance.timestamps,
-                    datasets: [ { data: thoracicImpedance.data,
+                    labels: graphData.TI_Timestamps,
+                    datasets: [ { data: graphData.TI_Data,
                                   strokeWidth: 2 }] 
                   }}
                   width={screenWidth - 20}
                   height={screenHeight * 0.85}
+                  verticalLabelRotation={90} //Degree to rotate
                   withInnerLines={false}
                   chartConfig={chartConfig}
                   style={styles.graph}
@@ -232,23 +258,24 @@ export default function PatientResultSessions({route}) {
 
 
           {/* Activity Status Graph*/}
-          {status.data.length == 0 && loading == false ? <Text style={styles.noDataText}>No data available for activity status</Text> 
+          {graphData.AS_Data.length == 0 && loading == false ? <Text style={styles.noDataText}>No data available for activity status</Text> 
 
           :
 
-          (status.data.length > 0 && loading == false) &&
+          (graphData.AS_Data.length > 0 && loading == false) &&
             
           <View style={styles.graphContainer}>
             <Text style={{textAlign: 'center'}}>Activity Status (0 = Not Active, 1 = Active)</Text>
             <LineChart
                   data={{
-                    labels: status.timestamps,
-                    datasets: [ { data: status.data,
+                    labels: graphData.AS_timestamps,
+                    datasets: [ { data: graphData.AS_Data,
                                   strokeWidth: 2 }] 
                   }}
                   width={screenWidth - 20}
                   height={screenHeight * 0.85}
                   withInnerLines={false}
+                  verticalLabelRotation={90} //Degree to rotate
                   chartConfig={chartConfig}
                   style={styles.graph}
                 />
@@ -273,6 +300,7 @@ export default function PatientResultSessions({route}) {
                     }}
                     withInnerLines={false}
                     withDots={ECG.length > 30 ? false : true}
+                    verticalLabelRotation={90} //Degree to rotate
                     width={screenWidth - 20}
                     height={screenHeight * 0.85}
                     chartConfig={chartConfig}
@@ -324,6 +352,9 @@ const chartConfig = {
     },
     propsForDots: {
       r: "2"
+    },
+    propsForLabels: {
+      fontSize: 8
     }
 }
 
