@@ -229,7 +229,7 @@ const getData = async (collection, formInputs, uid) => {
 
                       {/* Height */}
                       <View style={styles.inputGroup}>
-                          <Text style={styles.label}>Height (in)</Text>
+                          <Text style={styles.label}>Height (cm)</Text>
                           <View style={styles.inputRow}>
                               <TextInput style = {selectedFormStyle(this.state.button7)} defaultValue={userInfo.height} onChangeText={(text) => this.setState({ formInputs: { ...this.state.formInputs, height: text} })}/>
                           </View>

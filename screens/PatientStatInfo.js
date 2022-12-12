@@ -12,7 +12,7 @@ const screenHeight = Dimensions.get("window").height * 0.5;
 
 export default function PatientStatInfo() {
     const realtimeDB = getDatabase(app)
-    const starCountRef = query(ref(realtimeDB, userInfo.uid))
+    const starCountRef = query(ref(realtimeDB, String(userInfo.uid)))
     const [done, setDone] = useState(false)
     const [loading, setLoading] = useState(true)
     const [patientInfo, setPatientInfo] = useState({})
@@ -30,10 +30,9 @@ export default function PatientStatInfo() {
         setData(snapshot.val())
        });
     }, [])
-
+  
     useEffect(() => {
       if(data != null) if (data.length != 0) getData()
-      
       //Filters and adds sensor data into designated state
       setDone(true) //For loading icon
       if(done == true && loading == true) setLoading(false) //For loading icon
@@ -123,7 +122,7 @@ export default function PatientStatInfo() {
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Height: </Text> 
-                    <Text style={styles.biometricValue}>{patientInfo.height} in</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.height} cm</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Gender: </Text> 
@@ -147,7 +146,7 @@ export default function PatientStatInfo() {
 
         
           {/* Heart Rate Graph */}
-          {(graphData.HR_Data.length == 0 || graphData.HR_Data == null) && loading == false ? <Text style={styles.noDataText}>No data available for heart rate</Text> 
+          {( data == null || graphData.HR_Data.length == 0) && loading == false ? <Text style={styles.noDataText}>No data available for heart rate</Text> 
 
           :
 
@@ -172,7 +171,7 @@ export default function PatientStatInfo() {
           }
 
           {/* Thoracic Impedance Graph */}
-          {(graphData.TI_Data.length == 0 || graphData.TI_Data == null) && loading == false ? <Text style={styles.noDataText}>No data available for thoracic Impedance</Text> 
+          {(data == null || graphData.TI_Data.length == 0) && loading == false ? <Text style={styles.noDataText}>No data available for thoracic Impedance</Text> 
 
           :
 
@@ -198,7 +197,7 @@ export default function PatientStatInfo() {
 
 
           {/* Activity Status Graph*/}
-          {(graphData.AS_Data.length == 0 || graphData.AS_Data == null) && loading == false ? <Text style={styles.noDataText}>No data available for activity status</Text> 
+          {( data == null || graphData.AS_Data.length == 0) && loading == false ? <Text style={styles.noDataText}>No data available for activity status</Text> 
 
           :
 
@@ -225,7 +224,7 @@ export default function PatientStatInfo() {
 
 
           {/* ECG Graph */}
-          {(graphData.ECG_Data.length == 0 || graphData.ECG_Data == null) && loading == false ? <Text style={styles.noDataText}>No data available for ECG</Text> 
+          {(data == null || graphData.ECG_Data.length == 0) && loading == false ? <Text style={styles.noDataText}>No data available for ECG</Text> 
 
           :
 

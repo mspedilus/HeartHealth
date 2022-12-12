@@ -246,7 +246,7 @@ function RegisterScreen() {
 
           { show ?
             <View>
-              <Text style={styles.titleText}>Height (in)</Text>
+              <Text style={styles.titleText}>Height (cm)</Text>
               <TextInput style={styles.input} keyboardType="numeric" onChangeText={text => handleChange(text, "height")} />
             </View>
           : null

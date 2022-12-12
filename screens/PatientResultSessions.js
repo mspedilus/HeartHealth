@@ -15,7 +15,7 @@ export default function PatientResultSessions({route}) {
     //Initiates variables and states
     const patientUid = route.params.patientUid
     const realtimeDB = getDatabase(app)
-    const starCountRef = query(ref(realtimeDB, patientUid))
+    const starCountRef = query(ref(realtimeDB, String(patientUid)))
     const [done, setDone] = useState(false)
     const [loading, setLoading] = useState(true)
     const [patientInfo, setPatientInfo] = useState({})
@@ -112,7 +112,7 @@ export default function PatientResultSessions({route}) {
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Height: </Text> 
-                    <Text style={styles.biometricValue}>{patientInfo.height} in</Text>
+                    <Text style={styles.biometricValue}>{patientInfo.height} cm</Text>
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     <Text style={styles.biometricText}>Gender: </Text> 
