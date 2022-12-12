@@ -6,23 +6,10 @@ import "firebase/auth";
 import "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { userInfo } from '../App';//require cycle warning
-import { app } from "../firebaseToo";
-import { getDatabase, ref, onValue} from "firebase/database";
 
-
+//Home screen for patients
 function PatientHome() {
     const navigation = useNavigation();
-
-    
-    function getData () {
-        const db = getDatabase();
-        const starCountRef = ref(db);
-        onValue(starCountRef, (snapshot) => {
-          console.log(snapshot.val());
-        });
-    }
-
-
 
     return(
         <SafeAreaView style={styles.container}>

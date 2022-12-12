@@ -3,19 +3,12 @@ import { SafeAreaView, StyleSheet, Text, View, ScrollView, TextInput, TouchableO
 import React, {Component} from 'react'
 import { db } from "../firebase"; //DO NOT IMPORT FROM 'firebase/firestore/lite'
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { userInfo } from '../App';
 
-
+//Edits doctor profile page
 const getData = async (collection, formInputs, uid) => {
-  /*
-    REFERENCES:
-      Reading doc info: https://firebase.google.com/docs/firestore/query-data/get-data
-      ^^ Get a Document section
-      Updating doc fields: https://firebase.google.com/docs/firestore/manage-data/add-data
-      ^^ Update a document section
-  */
+
   const docRef = doc(db, collection, uid);
   const docSnap = await getDoc(docRef);
 

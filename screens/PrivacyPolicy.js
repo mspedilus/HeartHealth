@@ -1,9 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, StyleSheet, ScrollView, Text, View } from 'react-native';
-import { useNavigation } from "@react-navigation/native";
 
+//Provides information about the privacy policy
 function PrivacyPolicy() {
-    const navigation = useNavigation();
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView>

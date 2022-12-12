@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Pressable, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import React, {useState, useRef, useEffect} from 'react';
 import { userInfo } from './LoadingScreen';
-import { doc, getDoc, setDoc, collection, orderBy, query } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from "../firebase"; 
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -9,6 +9,7 @@ import DoctorBottomNavbar from './DoctorBottomNavbar';
 
 const screenWidth = Dimensions.get("window").width;
 
+//Search screen within the chat screen
 export default function DoctorChatSearchScreen() {
 
     const navigation = useNavigation();
@@ -23,26 +24,28 @@ export default function DoctorChatSearchScreen() {
         getPatientList()
     }, [0]);
 
-
+    //Gets all patients in the doctor network
     async function getPatientList(){
        const docSnap = await getDoc(docRef);
        if (docSnap.exists()) {
            setPatientList(docSnap.data().patients)
            setOngoingConversations(docSnap.data().ongoingConversations)
-
        }
        else {
             console.log("No such document!");
        }
     }
 
+    //Navigates to results screen with existing matches if there are any
     function onSearch () {
         let searchVal= searchValue.toLowerCase()
         const result = patientList.filter((patient) => {            
-            if(patient.firstName.toLowerCase().includes(searchVal) || patient.lastName.toLowerCase().includes(searchVal) || String(patient.uid).toLowerCase().includes(searchVal)){
-                return true
+            if ( patient.firstName.toLowerCase().includes(searchVal) || 
+                patient.lastName.toLowerCase().includes(searchVal) || 
+                String(patient.uid).toLowerCase().includes(searchVal)){
+                    return true
             }
-            else{
+            else {
                 return false
             }
         });

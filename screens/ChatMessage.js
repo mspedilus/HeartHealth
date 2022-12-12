@@ -1,17 +1,14 @@
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
-import { app } from "../firebaseToo";
-import { getAuth } from 'firebase/auth';
+import { Text, StyleSheet, Dimensions } from 'react-native';
 import { userInfo } from './LoadingScreen';
  
 const screenWidth = Dimensions.get("window").width;
 
+// Creates message bubbles
 export default function ChatMessage(props) {
-    const auth = getAuth(app);
     const {text, uid} = props.message;
     const messageStyle = uid === userInfo.uid ? 'sent' : 'received';
 
-    
   return (
 
        <Text style={messageStyle === 'sent' ? styles.sentMessages : styles.receivedMessages}>{text}</Text>

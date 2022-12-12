@@ -1,12 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Pressable, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { ListItem, Icon } from 'react-native-elements'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, signOut } from "firebase/auth";
 
-//Tutorial code for list item: https://reactnativeelements.com/docs/listitem#icon
 const list = [
   {
     title: 'Edit Personal Information',
@@ -29,6 +27,7 @@ const list = [
   },
 ]
 
+//Settings screen for patients
 function PatientSettings() {
     const navigation = useNavigation();
     const auth = getAuth();

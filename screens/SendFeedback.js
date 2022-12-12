@@ -3,14 +3,9 @@ import { StatusBar } from 'expo-status-bar';
 import React, {Component} from 'react'
 import { db } from "../firebase";
 import { collection, addDoc} from 'firebase/firestore';
-import { useNavigation } from "@react-navigation/native";
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
-/*
-  REFERENCE:
-  https://firebase.google.com/docs/firestore/manage-data/add-data
-  ^^ Add a document section for auto generated ID
-*/
+
 class SendFeedback extends Component {
   state = {
       comment: '',
@@ -112,7 +107,6 @@ class SendFeedback extends Component {
 }
 
 export default function SendAppFeedback() {
-    const navigation = useNavigation();
     return (
       <SendFeedback/>
     );

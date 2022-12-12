@@ -7,52 +7,21 @@ import ChatMessage from './ChatMessage';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
+//Chat screen for patients
 export default function PatientChatScreen () {
 
-
-    // useEffect(() => {
-    //     getPatientName()
-    // }, []);
-
-
-    // async function getPatientName(){
-    //     const docRef = doc(db, "Doctors", userInfo.doctorId);
-    //     const docSnap = await getDoc(docRef);
-    //     setPatientName(docSnap.data().firstName +  " " + docSnap.data().lastName )
-
-    // }
-
-    // const [patientName, setPatientName] = useState("")
-    // const messageRef = query(collection(db, String(userInfo.doctorId + userInfo.uid)), orderBy("createdAt"));
-    // const [messages] = useCollectionData(messageRef, {idField: 'id'})
-    // const [formValue, setFormValue] = useState('')
-    // const scrollViewRef = useRef();
-    
-    //  async function sendMessage() {
-    //     const uid = userInfo.uid;
-
-    //     await setDoc(doc(collection(db, String(userInfo.doctorId + userInfo.uid))), {
-    //         text: formValue,
-    //         createdAt: serverTimestamp(),
-    //         uid
-    //       });
-          
-    //     this.textInput.clear()
-    //     setFormValue('')
-
-    // }
-
-
-     //const auth = getAuth(app);
-
+    //Initiates variables and states
      const [ongoingConversations, setOngoingConversations] = useState([])
      const [formValue, setFormValue] = useState('')
- 
+     const [doctorName, setDoctorName] = useState("")
+     const docRef = doc(db, "Doctors", String(userInfo.doctorId));
+
+     //Retreieves chat logs from database
      const messageRef = query(collection(db, String(userInfo.doctorId) + String(userInfo.uid)), orderBy("createdAt"));
      const [messages] = useCollectionData(messageRef, {idField: 'id'})
      const scrollViewRef = useRef();
-     const docRef = doc(db, "Doctors", String(userInfo.doctorId));
 
+     //Gets doctor name
      async function getDoctorName(){
         const docRef = doc(db, "Doctors", userInfo.doctorId);
         const docSnap = await getDoc(docRef);
@@ -60,13 +29,12 @@ export default function PatientChatScreen () {
 
     }
 
-    const [doctorName, setDoctorName] = useState("")
-
      useEffect(() => {
          getOngoingConversations()
          getDoctorName()
      }, []);
  
+     //Gets list of ongoing conversations with the doctor
      async function getOngoingConversations(){
          const docSnap = await getDoc(docRef)
  
@@ -75,13 +43,15 @@ export default function PatientChatScreen () {
          } 
      }
  
+     //Provies action to the send button
       async function sendMessage() {
          const patient = {
              firstName: userInfo.firstName,
              lastName: userInfo.lastName,
              uid: userInfo.uid
          }
- 
+
+        //Adds id to database if first time starting a conversation
          if (!ongoingConversations.some( patient => patient.uid === userInfo.uid )) {
             const data = {"ongoingConversations": [...ongoingConversations, patient]}
             updateDoc(docRef, data)
@@ -90,7 +60,7 @@ export default function PatientChatScreen () {
             setOngoingConversations([...ongoingConversations, patient])   
         }
 
- 
+        //Adds message to database
          await setDoc(doc(collection(db, String(userInfo.doctorId) + String(userInfo.uid))), {
              text: formValue,
              createdAt: serverTimestamp(),
@@ -102,8 +72,6 @@ export default function PatientChatScreen () {
  
      }
  
- 
-
     return (
         <View style={{flex: 1}}>
             <Text style={styles.header}>               

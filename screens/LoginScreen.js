@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Alert, SafeAreaView, Pressable, TextInput, Image, Platform } from 'react-native';
+import { StyleSheet, Text, View, Alert, SafeAreaView, Pressable, TextInput, Image } from 'react-native';
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import "firebase/compat/firestore";
 

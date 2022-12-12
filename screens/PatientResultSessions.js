@@ -4,7 +4,7 @@ import {useState} from 'react';
 import { useEffect } from 'react';
 import {db, app} from "../firebase"
 import { doc, getDoc } from 'firebase/firestore';
-import { getDatabase, ref, onValue, limitToLast, query} from 'firebase/database';
+import { getDatabase, ref, onValue, query} from 'firebase/database';
 import {LineChart} from 'react-native-chart-kit'
 
 const screenWidth = Dimensions.get("window").width;
@@ -12,9 +12,10 @@ const screenHeight = Dimensions.get("window").height * 0.5;
 
 export default function PatientResultSessions({route}) {
 
+    //Initiates variables and states
     const patientUid = route.params.patientUid
     const realtimeDB = getDatabase(app)
-    const starCountRef = query(ref(realtimeDB, patientUid)/*, imitToLast(30)*/)
+    const starCountRef = query(ref(realtimeDB, patientUid))
     const [done, setDone] = useState(false)
     const [loading, setLoading] = useState(true)
     const [patientInfo, setPatientInfo] = useState({})
@@ -93,18 +94,6 @@ export default function PatientResultSessions({route}) {
                      ECG_Timestamp: ECG_Timestamp, ECG_Data: ECG_values})
 
     }
-
-    // console.log("data", data)
-    // console.log("Graph", graphData)
-    // console.log("timestamp", timestamps)
-    // console.log("heart rate", heartRate)
-    // console.log("TI", thoracicImpedance)
-    // console.log("status", status)
-    // console.log("ECG", ECG)
-    // console.log("ECG", ECG_Graph)
-    // console.log("ECG Timestapms", ECG_Timestamps)
-    // console.log("loading", loading)
-    // console.log(graphData.ECG_Data)
 
   return (
 

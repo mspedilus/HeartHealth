@@ -4,15 +4,15 @@ import {useState} from 'react';
 import { useEffect } from 'react';
 import {db, app} from "../firebase"
 import { doc, getDoc } from 'firebase/firestore';
-import { getDatabase, ref, onValue, limitToLast, query} from 'firebase/database';
+import { getDatabase, ref, onValue, query} from 'firebase/database';
 import {LineChart} from 'react-native-chart-kit'
 import { userInfo } from './LoadingScreen';
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height * 0.5;
 
-export default function PatientResultSessions() {
+export default function PatientStatInfo() {
     const realtimeDB = getDatabase(app)
-    const starCountRef = query(ref(realtimeDB, userInfo.uid)/*, imitToLast(30)*/)
+    const starCountRef = query(ref(realtimeDB, userInfo.uid))
     const [done, setDone] = useState(false)
     const [loading, setLoading] = useState(true)
     const [patientInfo, setPatientInfo] = useState({})

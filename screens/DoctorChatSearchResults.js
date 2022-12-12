@@ -1,6 +1,6 @@
-import React, {useState, useRef, useEffect, ScrollView} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import { useRoute } from '@react-navigation/native';
-import { View, Text, TextInput, Pressable, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { userInfo } from './LoadingScreen';
@@ -9,8 +9,10 @@ import { db } from "../firebase";
 
 const screenWidth = Dimensions.get("window").width;
 
+
 export default function DoctorChatSearchResults() {
 
+    //Initiates variables and states
     const navigation = useNavigation();
     const inputRef = useRef(null)
     const route = useRoute();
@@ -25,6 +27,7 @@ export default function DoctorChatSearchResults() {
         getAllPatients()
     }, [0]);
 
+    //Gets all patients in the doctors network
     async function getAllPatients(){
         const docRef = doc(db, "Doctors", String(userInfo.uid));
         const docSnap = await getDoc(docRef);
@@ -37,17 +40,20 @@ export default function DoctorChatSearchResults() {
      }
  
 
+    //Shows matches of search action
     function onSearch () {
-            let searchVal= searchValue.toLowerCase()
+            let searchVal = searchValue.toLowerCase()
 
             const result = allPatients.filter((patient) => {            
-                if(patient.firstName.toLowerCase().includes(searchVal) || patient.lastName.toLowerCase().includes(searchVal) || String(patient.uid).toLowerCase().includes(searchVal)){
-                    return true
-                }
-                else{
+                if( patient.firstName.toLowerCase().includes(searchVal) || 
+                    patient.lastName.toLowerCase().includes(searchVal) ||
+                    String(patient.uid).toLowerCase().includes(searchVal)) {
+                        return true
+                } else {
                     return false
                 }
             });
+
             setPatientList(result)
 
             if(result.length === 0){
@@ -78,11 +84,8 @@ export default function DoctorChatSearchResults() {
             })}
         </View> 
     </ScrollView>
-    
-    
-    }
 
-       
+    }
     </View>
   )
 }

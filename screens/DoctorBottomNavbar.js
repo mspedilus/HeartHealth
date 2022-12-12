@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const screenWidth = Dimensions.get("window").width;
 
+//Creates bottom navbar for doctor screens
 export default function DoctorBottomNavbar() {
     const navigation = useNavigation();
 

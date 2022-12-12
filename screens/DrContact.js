@@ -3,7 +3,6 @@ import { ListItem, Icon } from 'react-native-elements'
 import { onSnapshot,doc } from "firebase/firestore";
 import { db } from "../firebase";
 import React, { useEffect, useState } from 'react';
-import { useNavigation } from "@react-navigation/native";
 import { userInfo } from '../App';
 
 
@@ -37,15 +36,17 @@ function populateList(datap) {
     return list;
 }
 
-
+//Doctor information in patient's screens
 function DrContact() {
 
-    const navigation = useNavigation();
+    //Retreives the doctors information from dataabse
     const [datap, setDatap] = useState([]);
     useEffect(() => onSnapshot(doc(db, "Doctors", userInfo.doctorId), (doc) => {
       setDatap(doc.data());
     }), []);
-    const list = populateList(datap);
+
+    const list = populateList(datap); //Stores information
+
     return(
         <View style={styles.container}>
             <Text style={styles.heading}>Your Doctor Information</Text>

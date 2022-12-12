@@ -8,15 +8,16 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useRoute } from '@react-navigation/native';
 
-
+//Doctor chat screen 
 export default function DoctorChatScreen () {
 
-    //const auth = getAuth(app);
+    //Initiate variables and states
     const route = useRoute();
     const {firstName, lastName, uid} = route.params.patient;
     const [ongoingConversations, setOngoingConversations] = useState([])
     const [formValue, setFormValue] = useState('')
 
+    //Calls databse and retrieves chat log
     const docRef = doc(db, "Doctors", String(userInfo.uid));
     const messageRef = query(collection(db, String(userInfo.uid) + String(uid)), orderBy("createdAt"));
     const [messages] = useCollectionData(messageRef, {idField: 'id'})
@@ -26,6 +27,7 @@ export default function DoctorChatScreen () {
         getOngoingConversations()
     }, []);
 
+    //Adds marker in the database to show that a conversation has started
     async function getOngoingConversations(){
         const docSnap = await getDoc(docRef)
 
@@ -36,6 +38,7 @@ export default function DoctorChatScreen () {
         }
     }
 
+    //Adds new message to the database
      async function sendMessage() {
         const patient = {
             firstName: firstName,
@@ -58,11 +61,7 @@ export default function DoctorChatScreen () {
 
         this.textInput.clear()
         setFormValue('')
-
     }
-
-
-
 
     return (
         <View style={{flex: 1}}>
@@ -81,9 +80,6 @@ export default function DoctorChatScreen () {
                 <FontAwesome style={styles.icon} name={"send-o"} size={30} color={'black'}/> 
                 </Pressable>
             </View>
-
-
-
         </View>
     )
 }

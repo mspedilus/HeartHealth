@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, ActivityIndicator, StyleSheet, View } from "react-native";
 import { userInfo } from "../App";
 
+//Provides loading action when first logged in
 const LoadingScreen = props => {
     const [loading, setLoading] = useState(false);
     useEffect(() => {

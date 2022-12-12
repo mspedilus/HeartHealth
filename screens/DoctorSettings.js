@@ -6,7 +6,6 @@ import { useNavigation } from "@react-navigation/native";
 import { getAuth, signOut } from "firebase/auth";
 
 
-//Tutorial code for list item: https://reactnativeelements.com/docs/listitem#icon
 const list = [
   {
     title: 'Edit Personal Information',
@@ -29,9 +28,12 @@ const list = [
   },
 ]
 
+//Settings screen for doctors
 function DoctorSettings() {
+
     const navigation = useNavigation();
     const auth = getAuth();
+    
     return (
       <SafeAreaView style={styles.container}>
           <View styles={styles.header}>

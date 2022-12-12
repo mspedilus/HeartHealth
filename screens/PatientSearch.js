@@ -7,6 +7,7 @@ import { userInfo } from '../App';
 
 const screenWidth = Dimensions.get("window").width;
 
+//Searches for an existing patient in the doctor network
 export default function PatientSearch() {
   const navigation = useNavigation();
   const [uID, setUID] = useState('');

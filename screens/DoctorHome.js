@@ -1,17 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, Dimensions, Pressable, StyleSheet, Text, View, Platform } from 'react-native';
+import { SafeAreaView, Dimensions, StyleSheet, Text, View } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { useNavigation } from "@react-navigation/native";
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { userInfo } from './LoadingScreen';
 import React from 'react'
 import DoctorBottomNavbar from './DoctorBottomNavbar';
 
 const screenWidth = Dimensions.get("window").width;
 
+//Doctor's home screen
 function DoctorHome() {
 
-    const navigation = useNavigation();
     return (
       <SafeAreaView style={styles.container}>
           <View style={{marginTop: 20}}>

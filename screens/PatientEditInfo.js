@@ -10,7 +10,7 @@ import { useNavigation } from "@react-navigation/native";
 import { userInfo } from '../App'; //require cycle warning
 
 
-
+//Edits profile page for patients
 const updateDoctorPatients = async (formInputs, newUser) => {
   const oldDoc = doc(db, 'Doctors', userInfo.doctorId);
   const oldDocSnap = await getDoc(oldDoc);
