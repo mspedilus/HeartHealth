@@ -83,16 +83,17 @@ export default function App() {
   }
 
   const firebaseConfig = {
-    apiKey: "AIzaSyDSrSZNtbfb9v7NXPQdebixAomh2UL3IYE",
-    authDomain: "hf-wearable-device.firebaseapp.com",
-    databaseURL: "https://hf-wearable-device-default-rtdb.firebaseio.com",
-    projectId: "hf-wearable-device",
-    storageBucket: "hf-wearable-device.appspot.com",
-    messagingSenderId: "972933487222",
-    appId: "1:972933487222:web:7330581d41a65ee3235d57",
-    measurementId: "G-JM7T1WT9YT"
+    apiKey: "AIzaSyCD10KucIjlrPVxGK8hlKdv4_Hc7tHeAnE",
+    authDomain: "egnproject-2a600.firebaseapp.com",
+    databaseURL: "https://egnproject-2a600-default-rtdb.firebaseio.com",
+    projectId: "egnproject-2a600",
+    storageBucket: "egnproject-2a600.appspot.com",
+    messagingSenderId: "517236214863",
+    appId: "1:517236214863:web:1fff67b54f558706b0ee3a",
+    measurementId: "G-237KSFEBFT"
   };
-  
+
+
   //Checking if firebase has been initialized
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
