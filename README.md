@@ -16,7 +16,7 @@ Patient users
 
 
 
-#Run HeartHealth:
+### Run HeartHealth:
 
 	1) Copy all files
 
@@ -42,7 +42,7 @@ Download the expo go app on your phone and make sure you're connected to the sam
 If there's an error when you're trying to view the app on your phone go to your wifi settings on your computer and change the network to private. 
 
 
-#View the app with sample data
+### View the app with sample data
 1) Download the json file in Applications Images & Sample Data
 2) Import the file in your firebase real time database
 3) Create a doctor account in the application
