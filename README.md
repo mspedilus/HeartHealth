@@ -3,7 +3,15 @@ Mobile app for iOS and android devices made with React Native, JavaScript, and G
 
 #Video Walkthrough
 
-![](https://i.imgur.com/KI0x21v.gif)
+
+Doctor users
+
+![](https://i.imgur.com/GdlKX7g.gif)
+
+
+Patient users
+
+![](https://i.imgur.com/LjFGRAQ.gif)
 
 
 #Run HeartHealth:
