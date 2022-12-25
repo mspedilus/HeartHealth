@@ -1,9 +1,9 @@
 # HeartHealth
 Mobile app for iOS and android devices made with React Native, JavaScript, and Google Firebase for the backend. Use the app to view data in real time and communicate with other users.
 
-#Video Walkthrough 
+#Video Walkthrough
 
-![](https://i.imgur.com/QZQrXBx.gif)
+![](https://i.imgur.com/KI0x21v.gif)
 
 
 #Run HeartHealth:
