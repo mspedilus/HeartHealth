@@ -6,12 +6,14 @@ Mobile app for iOS and android devices made with React Native, JavaScript, and G
 
 Doctor users
 
-![](https://i.imgur.com/GdlKX7g.gif)
+![](https://i.imgur.com/oSErifB.gif)
+
 
 
 Patient users
 
-![](https://i.imgur.com/LjFGRAQ.gif)
+![](https://i.imgur.com/9l6aBon.gif)
+
 
 
 #Run HeartHealth:
