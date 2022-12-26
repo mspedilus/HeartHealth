@@ -1,8 +1,7 @@
 # HeartHealth
-Mobile app for iOS and android devices made with React Native, JavaScript, and Google Firebase for the backend. Use the app to view data in real time and communicate with other users.
+HeartHealth a mobile app for iOS and android devices made with React Native, JavaScript, and Google Firebase for the backend. Use the app to view data in real time and communicate with other users. Users can register as either a doctor or a patient and can view and manage data pertaining to the heart rate, electrocardiogram, activity movement/status, and thoracic impedance. Data is retreived from and stored to Google's real time database and firestore database.
 
 ### Video Walkthrough
-
 
 #### Doctor's view
 
