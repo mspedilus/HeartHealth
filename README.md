@@ -35,7 +35,7 @@ HeartHealth is a mobile app for iOS and android devices built using React Native
 	
 	8) In your terminal run this to start the project
 	npm start
-
+ 
 To view the app use an andriod or apple emulator or download the expo go app on your phone and make sure you're connected to the same wifi on your computer and phone. If there's an error when viewing the app on your phone, try going to your wifi settings on your computer and change the network to private. 
 
 
